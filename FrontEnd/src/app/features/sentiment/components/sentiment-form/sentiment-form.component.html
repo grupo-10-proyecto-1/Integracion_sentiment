@@ -1,0 +1,50 @@
+<section class="p-6 flex flex-col items-center justify-center">
+    <div class="w-full md:w-4/5 lg:w-3/4 max-w-4xl rounded-3xl bg-slate-900 border border-slate-800 p-8 shadow-2xl space-y-6">
+        
+        <div class="space-y-1">
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                <span class="text-indigo-400">✍️</span> Analizar Comentario
+            </h2>
+            <p class="text-slate-400 text-sm italic">Privacidad garantizada: no almacenamos datos personales.</p>
+        </div>
+
+        <div class="relative group">
+            <textarea [(ngModel)]="text" rows="5" 
+                placeholder="Escribe o pega el comentario aquí..."
+                class="w-full p-5 rounded-2xl bg-slate-950 border border-slate-800 focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/10 outline-none text-slate-200 transition-all resize-none placeholder:text-slate-600">
+            </textarea>
+            
+            <div class="absolute bottom-4 right-4 text-[10px] font-mono text-slate-600 group-focus-within:text-indigo-400 transition-colors uppercase tracking-widest">
+                {{ text.length > 0 ? 'Ready to analyze' : 'Waiting for input' }}
+            </div>
+        </div>
+
+        <details class="group bg-slate-950/50 rounded-xl border border-slate-800 transition-all">
+            <summary class="list-none p-3 cursor-pointer flex items-center justify-between">
+                <div class="flex items-center gap-2 text-[11px] font-semibold text-slate-500 uppercase tracking-wider select-none">
+                    <span class="text-indigo-400">💡</span> ¿Cómo obtener mejores resultados?
+                </div>
+                <span class="text-slate-600 group-open:rotate-180 transition-transform text-[10px]">▼</span>
+            </summary>
+            
+            <div class="px-4 pb-4 animate-in fade-in slide-in-from-top-1 duration-300">
+                <div class="flex items-start gap-3 p-3 rounded-lg bg-amber-500/5 border border-amber-500/10">
+                    <p class="text-[11px] leading-relaxed text-slate-400">
+                        <strong class="text-amber-500/80 font-bold uppercase text-[9px]">Recomendaciones técnicas:</strong><br>
+                        Para una precisión óptima con nuestro modelo <b>TF-IDF</b>, utiliza una ortografía estándar (incluyendo tildes). 
+                        El motor está diseñado para lenguaje <b>objetivo y directo</b>; actualmente no procesa sarcasmo o dobles sentidos.
+                    </p>
+                </div>
+            </div>
+        </details>
+
+        <button (click)="submit()" [disabled]="loading || !text"
+            class="w-full py-4 rounded-2xl bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-500 transition-all duration-300 font-bold text-white shadow-lg shadow-indigo-900/20 flex items-center justify-center gap-3 group">
+            <span *ngIf="loading" class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+            {{ loading ? 'Procesando con IA...' : 'Analizar Sentimiento' }}
+            <svg *ngIf="!loading" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+        </button>
+    </div>
+</section>

@@ -1,0 +1,47 @@
+<section *ngIf="result" class="p-6 flex flex-col items-center justify-center animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div class="w-full md:w-4/5 lg:w-3/4 max-w-4xl rounded-3xl bg-slate-900 border border-slate-800 overflow-hidden shadow-2xl">
+        
+        <div class="p-6 border-b border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-950/50">
+            <div class="flex items-center gap-4">
+                <div class="p-3 rounded-2xl" [ngClass]="badgeColor.replace('text-', 'bg-').replace('400', '400/10')">
+                    <span class="text-2xl">🔍</span>
+                </div>
+                <div>
+                    <h3 class="text-slate-400 text-xs font-bold uppercase tracking-widest">Resultado del Análisis</h3>
+                    <p class="text-xl font-black uppercase tracking-tight " [ngClass]="badgeColor">
+                        Sentimiento {{ result.sentiment }}
+                    </p>
+                </div>
+            </div>
+            
+            <div class="flex flex-col items-center md:items-end">
+                <span class="text-3xl font-mono font-black text-white">
+                    {{ result.probability * 100 | number:'1.0-0' }}%
+                </span>
+                <span class="text-[10px] text-slate-500 font-bold uppercase">Nivel de Confianza</span>
+            </div>
+        </div>
+
+        <div class="p-8 space-y-8">
+            <div class="relative">
+                <svg class="absolute -top-4 -left-4 h-8 w-8 text-slate-800" fill="currentColor" viewBox="0 0 32 32"><path d="M9.333 4.667c-4.417 0-8 3.583-8 8s3.583 8 8 8c.375 0 .739-.026 1.094-.078C9.557 24.281 6.635 26.667 3.333 26.667v2.666c6.229 0 11.333-5.104 11.333-11.333V4.667H9.333zM25.333 4.667c-4.417 0-8 3.583-8 8s3.583 8 8 8c.375 0 .739-.026 1.094-.078C25.557 24.281 22.635 26.667 19.333 26.667v2.666c6.229 0 11.333-5.104 11.333-11.333V4.667h-5.333z"/></svg>
+                <p class="text-lg text-slate-300 italic leading-relaxed relative  z-10 pl-6  " [ngClass]="borderColor">
+                    {{ text }}
+                </p>
+            </div>
+
+            <div class="space-y-3 bg-slate-950/40 p-6 rounded-2xl border border-slate-800/50">
+                <div class="flex justify-between text-xs font-bold uppercase text-slate-500 tracking-widest">
+                    <span>Precisión del Veredicto</span>
+                    <span [ngClass]="badgeColor" class="rounded-md p-1">Análisis Completo</span>
+                </div>
+                <div class="w-full bg-slate-800 rounded-full h-3 overflow-hidden p-[2px]">
+                    <div class="h-full rounded-full transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(0,0,0,0.5)]" 
+                        [ngClass]="barColor"
+                        [style.width.%]="result.probability * 100">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

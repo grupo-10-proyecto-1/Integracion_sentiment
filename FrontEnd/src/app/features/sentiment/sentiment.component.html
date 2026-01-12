@@ -1,0 +1,18 @@
+
+<app-header></app-header>
+<app-mock-carousel></app-mock-carousel>
+<app-sentiment-form
+  (analyzeText)="analyze($event)">
+</app-sentiment-form>
+
+<app-sentiment-result
+  *ngIf="result"
+  [text]="text"
+  [result]="result">
+</app-sentiment-result>
+
+<app-sentiment-metrics
+  *ngIf="metrics"
+  [metrics]="metrics">
+</app-sentiment-metrics>
+<app-footer></app-footer>

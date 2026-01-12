@@ -1,0 +1,31 @@
+# Docker Compose - Entorno de Ejecución (Dev 4)
+# Orquesta el Backend (Spring Boot) y prepara la red para el servicio de IA.
+# Ejecutar con: docker-compose up --build
+
+services:
+  sentiment-backend:
+    build: .
+    container_name: sentiment-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SENTIMENT_MODE=mock
+      # Cuando integremos Python, cambiamos a:
+      # - SENTIMENT_MODE=python
+      # - PYTHON_API_BASE_URL=http://sentiment-model:8000
+    networks:
+      - sentiment-net
+
+  # Placeholder para el futuro servicio de IA (FastAPI)
+  # sentiment-model:
+  #   build: ../sentiment-model  # Asumiendo que el repo de python estará al lado
+  #   image: sentiment-model:latest
+  #   container_name: sentiment-model
+  #   ports:
+  #     - "8000:8000"
+  #   networks:
+  #     - sentiment-net
+
+networks:
+  sentiment-net:
+    driver: bridge

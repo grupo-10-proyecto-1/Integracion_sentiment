@@ -1,0 +1,62 @@
+{
+	"info": {
+		"_postman_id": "b5a1b2c3-d4e5-4f6a-8b9c-0d1e2f3a4b5c",
+		"name": "Sentiment Analysis Backend",
+		"description": "Colección para probar el API de Sentimientos (Dev 4)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Analizar Sentimiento (Mock)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"text\": \"Estoy muy impresionado con la velocidad de esta API\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/sentiment",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"sentiment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/actuator/health",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"actuator",
+						"health"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}

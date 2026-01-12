@@ -1,0 +1,139 @@
+👤 Dev 1 — Integración/Arquitectura (mejoras “pro”)
+
+Timeouts + retries (mínimo)
+
+Configurar timeouts en el cliente HTTP (RestTemplate) para que no quede colgado.
+
+(Opcional) reintento simple (1–2) o usar Spring Retry si no quieren meter dependencia extra.
+
+Endpoint de proxy más realista
+
+Asegurar que el BE solo sea “proxy” y no cambie el contrato.
+
+Si FastAPI devuelve error, mapear a 503 con mensaje claro.
+
+Config por environment
+
+application.properties (mock por defecto)
+
+application-local.properties (python url local)
+
+Documentar sentiment.mode y python.api.url.
+
+Health check del modelo
+
+Agregar /health/model que intente llamar a FastAPI (si mode=python) y responda ok/fail.
+
+👤 Dev 2 — Robustez/Seguridad (tu terreno)
+
+Completar handler 503 real
+
+Dejar activo (no comentado) el @ExceptionHandler(ResourceAccessException.class) → 503 {error:"Modelo no disponible"}.
+
+También capturar HttpStatusCodeException (cuando FastAPI responda 4xx/5xx) y devolver 502/503 según decidan.
+
+Validaciones más “API friendly”
+
+Límite máximo de texto (ej. 2.000 o 5.000 chars) → 400.
+
+Rechazar nulls y whitespace (ya).
+
+Estandarizar códigos y mensajes
+
+400: input inválido
+
+503: modelo caído/no disponible
+
+500: error interno
+Todo siempre como { "error": "..." }.
+
+RequestId / trazabilidad
+
+Generar/propagar un X-Request-Id (filtro) y loguearlo. Ayuda muchísimo en demo.
+
+podria agreagr este scripts para monitoreo: // Endpoint de Salud: Útil para monitoreo @GetMapping("/health") public ResponseEntity<Map<String, String>> checkHealth() { return ResponseEntity.ok(Map.of( "status", "UP", "message", "El Backend de Sentimientos está funcionando correctamente en Linux Mint" )); }
+
+👤 Dev 3 — Contratos/DTOs (sí o sí conviene hacerlo)
+
+Aunque “espere a ver si usa record”, aquí hay cosas que puede hacer YA sin depender de DS:
+
+Cambiar Map → DTO
+
+Crear SentimentRequest { text }
+
+Controller recibe @RequestBody SentimentRequest req
+Esto reduce errores y mejora el contrato.
+
+Normalizar labels
+
+Definir enum SentimentLabel { POSITIVO, NEGATIVO, NEUTRO }
+o dejar string pero acordar formato exacto (ej. "Positivo" capitalizado).
+
+Versionar contrato
+
+Endpoint base /api/v1/sentiment (opcional) o mantener /sentiment pero documentar “v1”.
+
+Validación con Bean Validation (opcional pro)
+
+@NotBlank, @Size(min=3, max=2000) en SentimentRequest
+(Si quieren esto, sí tocaría agregar spring-boot-starter-validation al pom; si no quieren tocar pom, se queda manual.)
+
+👤 Dev 4 — QA/Docs/Demo (subir puntos en hackathon)
+
+Tests automáticos básicos (sin volverse loco)
+
+Un par de tests con MockMvc:
+
+400 cuando falta text
+
+200 cuando text válido
+Esto da puntos y confianza.
+
+Colección Postman exportada + ejemplos “bonitos”
+
+Guardar y exportar la collection.
+
+Agregar variables: {{baseUrl}}.
+
+README modo jurado
+
+“Quickstart” en 30 segundos
+
+“Mock mode” vs “Python mode”
+
+Ejemplos de request/response
+
+Troubleshooting (puerto, java 17, etc.)
+
+Docker (si hay tiempo)
+
+Dockerfile para Spring
+
+docker-compose con Spring + placeholder (FastAPI luego)
+Esto impresiona en demo.
+
+🔥 Si quieren 2 funcionalidades opcionales fáciles que dan puntos
+
+✅ GET /stats (sin DB, en memoria):
+
+guardar conteo en ConcurrentHashMap o contadores
+
+retornar porcentajes últimos N requests (o totales)
+
+✅ GET /health y GET /health/model:
+
+/health siempre ok
+
+/health/model intenta ping a FastAPI si mode=python
+
+Reparto rápido (para no pisarse)
+
+Dev1: timeouts + /health/model + config env
+
+Dev2: handler 503 + request-id + max length + estandarización errores
+
+Dev3: SentimentRequest DTO + normalizar labels (+ enum opcional)
+
+Dev4: 2 tests MockMvc + README “jurado” + postman export + (docker opcional)
+
+Si me dices qué tan estricto es el hackathon con “no tocar el pom”, te digo cuál de estas mejoras conviene evitar (principalmente Bean Validation y Springdoc/Swagger).

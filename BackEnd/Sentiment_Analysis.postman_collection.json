@@ -1,0 +1,95 @@
+{
+	"info": {
+		"_postman_id": "b5a7c8d9-1234-5678-9abc-def012345678",
+		"name": "Sentiment Analysis Demo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "0"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "{{baseUrl}}/health"
+			},
+			"response": []
+		},
+		{
+			"name": "Analizar Sentimiento (Positivo)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"text\": \"El equipo de desarrollo hizo un trabajo excelente.\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/sentiment",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"sentiment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Analizar Sentimiento (Negativo)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"text\": \"Este producto tiene muchas fallas y es decepcionante.\"\n}"
+				},
+				"url": "{{baseUrl}}/sentiment"
+			},
+			"response": []
+		},
+		{
+			"name": "Validación Error (Texto Vacío)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"text\": \"\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/sentiment",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"sentiment"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080"
+		}
+	]
+}
