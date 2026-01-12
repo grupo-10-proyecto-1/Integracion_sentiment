@@ -56,3 +56,24 @@ Cada vez que se realiza un `push` o `pull_request` a la rama principal, se ejecu
     -   Ejecuta `npm run build` para asegurar que la aplicación compila correctamente para producción.
 
 Esto asegura que ningún código roto llegue a producción.
+
+## 6. Despliegue Unificado (Docker Compose)
+Para el entorno de producción, se ha implementado una arquitectura orquestada con **Docker Compose** que unifica los tres servicios bajo un mismo dominio utilizando **Nginx** como Reverse Proxy.
+
+### 6.1. Arquitectura de Despliegue
+*   **Nginx Proxy (Puerto 80):** Recibe todas las peticiones externas.
+    *   `/` -> Redirige al contenedor `sentiment-frontend`.
+    *   `/api` -> Redirige al contenedor `sentiment-backend`.
+*   **Red Interna (`sentiment-net`):** Todos los contenedores se comunican a través de una red aislada.
+    *   El Backend accede al modelo de IA mediante `http://sentiment-model:8000`.
+
+### 6.2. Instrucciones de Ejecución
+1.  Ubicarse en la raíz del proyecto.
+2.  Ejecutar: `docker-compose up --build`
+3.  Acceder a la aplicación en: `http://localhost`
+
+### 6.3. Solución de Problemas Comunes
+*   **Error de Conexión Docker:** Si aparece `open //./pipe/dockerDesktopLinuxEngine...`, asegurar que Docker Desktop esté corriendo.
+*   **Conflicto de Nombres:** Si un contenedor ya existe, ejecutar `docker rm -f <nombre_contenedor>`.
+*   **API Desconectada:** Verificar que el Frontend apunte a `/api` y no a una URL absoluta en `environment.ts`.
+

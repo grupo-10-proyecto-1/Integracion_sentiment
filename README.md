@@ -7,9 +7,27 @@ Sistema completo de análisis de sentimientos integrado:
 
 ---
 
-## 🚀 Quickstart (Modo Jurado - 2 Minutos)
+## 🚀 Quickstart (Modo Producción - Docker)
 
-Para levantar todo el sistema, abre 3 terminales y ejecuta:
+Para levantar todo el sistema unificado (Backend, Frontend, IA) con un solo comando:
+
+1.  Asegúrate de tener **Docker Desktop** corriendo.
+2.  Ejecuta en la raíz del proyecto:
+
+```powershell
+docker-compose up --build
+```
+
+3.  Acceder a la aplicación:
+    *   **Web UI**: [http://localhost](http://localhost)
+    *   **API Docs (FastAPI)**: [http://localhost:8000/docs](http://localhost:8000/docs)
+    *   **API Backend**: [http://localhost/api/health](http://localhost/api/health)
+
+---
+
+## 💻 Desarrollo Local (Modo Manual)
+
+Si prefieres ejecutar cada servicio por separado para desarrollo:
 
 ### Terminal 1: Cerebro (IA) 🧠
 ```powershell
@@ -17,21 +35,19 @@ cd FastAPI
 .\.venv\Scripts\activate
 uvicorn main:app --reload --port 8000
 ```
-*Verificar: http://localhost:8000/health*
 
 ### Terminal 2: BackEnd (API) ⚙️
 ```powershell
 cd BackEnd
 .\mvnw.cmd spring-boot:run
 ```
-*Verificar: http://localhost:8080/health*
 
 ### Terminal 3: FrontEnd (UI) 💻
 ```powershell
 cd FrontEnd
 npm start
 ```
-*Abrir: http://localhost:4200*
+*Nota: En modo manual, asegúrate de que el Frontend apunte a `localhost:8080` y no a `/api`.*
 
 ---
 
