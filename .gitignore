@@ -1,0 +1,58 @@
+HELP.md
+
+### Build ###
+target/
+build/
+
+### Maven ###
+.mvn/wrapper/maven-wrapper.jar
+
+### IDEs ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+### Logs ###
+*.log
+
+### Local configs ###
+application-local.properties
+application-local.yml
+
+### OS ###
+.DS_Store
+Thumbs.db
+
+### Temp ###
+*.tmp
+*.swp
+*.bak
+
+### H2 local DB ###
+data/
+*.mv.db
+*.trace.db
+*.lock.db
+
+# Python virtual environments
+.integradorEnv/
