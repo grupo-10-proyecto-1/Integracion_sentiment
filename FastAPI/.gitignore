@@ -27,3 +27,11 @@ Thumbs.db
 
 # Env variables
 .env
+
+# HuggingFace / ML models
+models/
+models/**
+*.bin
+*.safetensors
+*.pt
+*.onnx
