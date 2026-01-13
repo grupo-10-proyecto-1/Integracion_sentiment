@@ -27,6 +27,9 @@ public final class LimpiadorText {
      * Limpia sin cambiar el significado, y rechaza spam/ruido típico.
      */
     public static String limpiarOrThrow(String raw) {
+        if (raw == null || raw.isBlank()) { 
+            throw new InvalidInputException("El texto es requerido");
+        }
         // Normalización simple
         String text = raw.trim().replaceAll("\\s+", " ");
 
