@@ -1,11 +1,63 @@
 from enum import Enum
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
-import joblib
 from langdetect import detect_langs, LangDetectException
+import torch
+import torch.nn.functional as F
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+# Se adiciona librerias: torch, torch.nn.functional as F and AutoTokenizer, AutoModelForSequenceClassification -> joblib borrada.
 
-pipeline_es = joblib.load("models/sentiment_pipeline_es.joblib")
-pipeline_pt = joblib.load("models/sentiment_pipeline_pt.joblib")
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+MAX_LENGTH = 256
+# DEVICE ->  Esto le dice a PyTorch donde correr el modelo: cuda → GPU NVIDIA disponible, cpu → corre en un procesador normal
+# Esto garantiza que: el modelos y los temsores de entrada este en la mismo dispositivo.
+
+#--- Carga y ruta de modelos
+
+class RobertaPipeline:
+    def __init__(self, model_dir: str):
+        self.tokenizer = AutoTokenizer.from_pretrained(model_dir)
+        self.model = AutoModelForSequenceClassification.from_pretrained(model_dir)
+
+        self.model.to(DEVICE)
+        self.model.eval()
+
+        self.id2label = self.model.config.id2label
+
+    def predict(self, texts):
+        label, _ = self._infer(texts[0])
+        return [label]
+
+    def predict_proba(self, texts):
+        _, probs = self._infer(texts[0])
+        return [probs]
+
+    def _infer(self, text):
+        inputs = self.tokenizer(
+            text,
+            return_tensors="pt",
+            truncation=True,
+            padding=True,
+            max_length=MAX_LENGTH,
+        )
+
+        inputs = {k: v.to(DEVICE) for k, v in inputs.items()}
+
+        with torch.no_grad():
+            outputs = self.model(**inputs)
+            probs = F.softmax(outputs.logits, dim=1)[0].cpu().numpy()
+
+        pred_id = probs.argmax()
+        label = self.id2label[pred_id]
+
+        return label, probs
+
+
+# Rutas 
+pipeline_es = RobertaPipeline("models/model_es")
+pipeline_pt = RobertaPipeline("models/model_pt")
+
+#---
 
 
 class TextInput(BaseModel):
@@ -82,13 +134,54 @@ def analyze_sentiment(text: str):
 
     prediction = pipeline.predict([text])[0]
     probabilities = pipeline.predict_proba([text])[0]
-    confidence = float(max(probabilities))
-
+    
     prediction = str(prediction).upper()
 
+    #---
+    # Cambio en : confidence = float(max(probabilities)) -> reconstrucción explícita del mapa de probabilidades (ANTES se usaba solo max(probabilities))
+
+    labels = [pipeline.id2label[i] for i in range(len(probabilities))]
+    prob_map = dict(zip(labels, probabilities))
+
+    p_neg = float(prob_map["NEGATIVO"])
+    p_neu = float(prob_map["NEUTRO"])
+    p_pos = float(prob_map["POSITIVO"])
+
+    # confianza inicial
+    confidence = max(p_neg, p_neu, p_pos)
+
+    # NUEVO: manejo del solapamiento SOLO si gana NEUTRO (NO se crean clases nuevas, NO se cambia contrato)
+    
+    NEUTRAL_MARGIN = 0.05  # ← AJUSTABLE, valor seguro inicial
+
+    if prediction == "NEUTRO":
+        # NEUTRO solo es válido si gana con autoridad
+        if (p_neu - max(p_pos, p_neg)) < NEUTRAL_MARGIN:
+            # solapamiento real → forzar emoción dominante
+            if p_pos > p_neg:
+                prediction = "POSITIVO"
+                confidence = p_pos
+            else:
+                prediction = "NEGATIVO"
+                confidence = p_neg
+
+    # Penalización de NEUTRO en textos cortos
+
+    UMBRAL_de_TEXTO = 120  # caracteres
+
+    if len(text) < UMBRAL_de_TEXTO and prediction == "NEUTRO":
+        # texto corto y neutral → altamente sospechoso
+        if p_pos > p_neg:
+            prediction = "POSITIVO"
+            confidence = p_pos
+        else:
+            prediction = "NEGATIVO"
+            confidence = p_neg
+
+    
     if prediction == "POSITIVO":
-        return Prevision.POSITIVO, confidence
-    if prediction == "NEGATIVO":
-        return Prevision.NEGATIVO, confidence
+        return Prevision.POSITIVO, float(confidence)
+    elif prediction == "NEGATIVO":
+        return Prevision.NEGATIVO, float(confidence)
     else:
-        return Prevision.NEUTRO, confidence
+        return Prevision.NEUTRO, float(confidence)
