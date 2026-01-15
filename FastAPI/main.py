@@ -138,7 +138,8 @@ def analyze_sentiment(text: str):
     prediction = str(prediction).upper()
 
     #---
-    # Cambio en : confidence = float(max(probabilities)) -> reconstrucción explícita del mapa de probabilidades (ANTES se usaba solo max(probabilities))
+    # Cambio en : confidence = float(max(probabilities)) 
+    #    -> reconstrucción explícita del mapa de probabilidades (ANTES se usaba solo max(probabilities))
 
     labels = [pipeline.id2label[i] for i in range(len(probabilities))]
     prob_map = dict(zip(labels, probabilities))
@@ -150,33 +151,27 @@ def analyze_sentiment(text: str):
     # confianza inicial
     confidence = max(p_neg, p_neu, p_pos)
 
-    # NUEVO: manejo del solapamiento SOLO si gana NEUTRO (NO se crean clases nuevas, NO se cambia contrato)
-    
-    NEUTRAL_MARGIN = 0.05  # ← AJUSTABLE, valor seguro inicial
+    # Neutro como refugio natural en la duda
+    #    - Solapamiento → NEUTRO
+    #    - NO se castiga NEUTRO
 
-    if prediction == "NEUTRO":
-        # NEUTRO solo es válido si gana con autoridad
-        if (p_neu - max(p_pos, p_neg)) < NEUTRAL_MARGIN:
-            # solapamiento real → forzar emoción dominante
-            if p_pos > p_neg:
-                prediction = "POSITIVO"
-                confidence = p_pos
-            else:
-                prediction = "NEGATIVO"
-                confidence = p_neg
+    OVERLAP_MARGIN = 0.05
 
-    # Penalización de NEUTRO en textos cortos
+    top_probs = sorted([p_neu, p_pos, p_neg], reverse=True)
+
+    if (top_probs[0] - top_probs[1]) < OVERLAP_MARGIN:
+        prediction = "NEUTRO"
+        confidence = p_neu
+
+    # Textos cortos favorecen al neutro
 
     UMBRAL_de_TEXTO = 120  # caracteres
 
-    if len(text) < UMBRAL_de_TEXTO and prediction == "NEUTRO":
-        # texto corto y neutral → altamente sospechoso
-        if p_pos > p_neg:
-            prediction = "POSITIVO"
-            confidence = p_pos
-        else:
-            prediction = "NEGATIVO"
-            confidence = p_neg
+    if len(text) < UMBRAL_de_TEXTO:
+        # si no hay emoción fuerte, es neutral
+        if max(p_pos, p_neg) < 0.60:
+            prediction = "NEUTRO"
+            confidence = p_neu
 
     
     if prediction == "POSITIVO":
