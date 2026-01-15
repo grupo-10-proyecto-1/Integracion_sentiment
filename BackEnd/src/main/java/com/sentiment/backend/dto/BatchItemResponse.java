@@ -1,9 +1,9 @@
 package com.sentiment.backend.dto;
 
-public record BatchSemtimentItemResponse(
+public record BatchItemResponse(
         int index,
-        Prevision prevision,
-        Double probabilidad,
-        String error
+        String text,
+        SentimentResponse result,
+        ErrorResponse error
 ) {
 }

@@ -1,4 +1,6 @@
 package com.sentiment.backend.dto;
 
-public class BatchSentimentRequest {
+import java.util.List;
+
+public record BatchSentimentRequest(List<String> texts){
 }

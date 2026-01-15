@@ -1,11 +1,14 @@
 package com.sentiment.backend.service;
 
+import com.sentiment.backend.dto.*;
+import com.sentiment.backend.exception.InvalidInputException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.sentiment.backend.client.SentimentDsClient;
-import com.sentiment.backend.dto.Prevision;
-import com.sentiment.backend.dto.SentimentResponse;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Servicio principal de negocio para el análisis de sentimientos.
@@ -56,4 +59,28 @@ public class SentimentService {
             dsClient.healthCheck();
         }
     }
+
+
+    public BatchSentimentResponse predictBatch(List<String> texts){
+        if (texts == null || texts.isEmpty()){
+            throw new InvalidInputException("La lista de textos no puede estar vacía");
+        }
+        List<BatchItemResponse> resultados = new ArrayList<>();
+        int correctos = 0;
+        int fallidos = 0;
+        for (int i=0;i < texts.size(); i++){
+            String text = texts.get(i);
+            try{
+                String textLimpio = LimpiadorText.limpiarOrThrow(text);
+                SentimentResponse respuesta = dsClient.predict(textLimpio);
+                resultados.add(new BatchItemResponse(i,text, respuesta, null));
+                correctos++;
+            } catch (Exception ex){
+                fallidos++;
+                resultados.add(new BatchItemResponse(i,text,null, new ErrorResponse(ex.getMessage(),"BATCH_ITEM_ERROR")));
+            }
+        }
+        return new BatchSentimentResponse(texts.size(), correctos, fallidos, resultados);
+    }
+
 }

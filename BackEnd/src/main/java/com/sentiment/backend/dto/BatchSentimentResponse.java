@@ -1,4 +1,10 @@
 package com.sentiment.backend.dto;
 
-public record BatchSentimentResponse() {
-}
+import java.util.List;
+
+public record BatchSentimentResponse(
+        int total,
+        int correctos,
+        int fallidos,
+        List<BatchItemResponse> resultados
+) {}
