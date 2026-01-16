@@ -72,7 +72,16 @@ ef1294ffcefc   nginx:alpine                               "/docker-entrypoint.�
 ### Paso 1.3: Pruebas de Humo (Smoke Tests)
 
 *   **Acción:** Se accedió a los endpoints principales de cada servicio a través del navegador.
-*   **Resultado:** PENDIENTE de confirmación del usuario.
+*   **Resultado:** PENDIENTE de confirmación del usuario. **(Por favor, Beto, confirma manualmente estos puntos en tu navegador)**
     *   `http://localhost:4200` (Frontend): PENDIENTE
     *   `http://localhost:8080/swagger-ui/index.html` (Backend Docs): PENDIENTE
     *   `http://localhost:8000/docs` (Modelo Docs): PENDIENTE
+
+---
+
+## **Fecha: 16 de enero de 2026 - Actualización de Codebase**
+
+### Confirmación de la Solución (FastAPI/main.py)
+
+*   **Acción:** Se verificó el archivo `FastAPI/main.py`.
+*   **Resultado:** **CONFIRMADO.** Las rutas de los modelos en `FastAPI/main.py` están configuradas correctamente con rutas absolutas (`/app/models/model_es` y `/app/models/model_pt`). Esto asegura que el servicio `sentiment-model` pueda cargar sus modelos correctamente.
