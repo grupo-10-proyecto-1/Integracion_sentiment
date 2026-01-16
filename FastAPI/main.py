@@ -54,8 +54,8 @@ class RobertaPipeline:
 
 
 # Rutas 
-pipeline_es = RobertaPipeline("models/model_es")
-pipeline_pt = RobertaPipeline("models/model_pt")
+pipeline_es = RobertaPipeline("/app/models/model_es")
+pipeline_pt = RobertaPipeline("/app/models/model_pt")
 
 #---
 

@@ -1,107 +1,141 @@
-### **Plan de Pruebas de QA: Integración de Análisis de Sentimiento**
+# Plan de Pruebas y Guía de Ejecución de QA
 
-**Versión:** 1.0
+**Versión:** 2.0
 **Autor:** Beto (Dev4 - QA)
 **Fecha:** 16 de enero de 2026
 
-#### **1. Objetivo General**
+---
 
-Asegurar que la aplicación de análisis de sentimiento funcione de manera correcta, estable y eficiente en todos sus componentes (Frontend, Backend, Modelo ML) y en su conjunto. El foco principal es validar las integraciones y los flujos de usuario de principio a fin (`End-to-End`).
+### **1. Objetivo General**
 
-#### **2. Alcance de las Pruebas**
+Asegurar que la aplicación de análisis de sentimiento funcione de manera correcta, estable y eficiente en todos sus componentes (Frontend, Backend, Modelo ML) y en su conjunto. Este documento sirve como un plan maestro y una guía de ejecución paso a paso para todas las actividades de QA.
+
+---
+
+### **2. Alcance y Estrategia de Pruebas**
+
+#### **2.1. Alcance**
 
 *   **EN ALCANCE:**
-    *   Pruebas funcionales de los endpoints del Backend.
-    *   Pruebas de integración entre el Backend y el servicio de FastAPI.
-    *   Pruebas de integración entre el Frontend y los endpoints del Backend.
-    *   Pruebas de los flujos de usuario completos (Análisis individual, Lote, Historial, Estadísticas).
-    *   Validación básica de la persistencia de datos (historial).
-    *   Manejo de errores y respuestas en la UI.
+    *   Pruebas funcionales de los endpoints del Backend (API).
+    *   Pruebas de integración entre todos los servicios (Frontend, Backend, Modelo, DB).
+    *   Pruebas de los flujos de usuario completos (End-to-End).
+    *   Validación de la persistencia de datos (historial) y actualización de estadísticas.
+    *   Validación del manejo de errores en la API y en la interfaz de usuario.
 *   **FUERA DE ALCANCE (para esta fase):**
-    *   Pruebas de estrés o carga masiva.
+    *   Pruebas de estrés, carga o rendimiento.
     *   Pruebas de seguridad exhaustivas (pen-testing).
-    *   Validación de la precisión del modelo ML (se asume que el modelo es una "caja negra" que entrega un resultado).
+    *   Validación de la precisión algorítmica del modelo ML (se trata como una caja negra).
 
-#### **3. Estrategia y Tipos de Pruebas**
+#### **2.2. Estrategia de Pruebas**
 
-Se proponen 4 niveles de pruebas:
+La estrategia es ejecutar las pruebas en fases incrementales, asegurando primero los cimientos (entorno y conectividad) antes de validar la lógica de negocio y la experiencia del usuario.
 
-**3.1. Pruebas de Componentes (A cargo de cada Dev)**
+1.  **Configuración del Entorno:** Preparar un entorno de pruebas consistente usando Docker.
+2.  **Pruebas de Humo (Smoke Tests):** Verificar que todos los servicios se inicien y sean accesibles.
+3.  **Pruebas de Integración (Nivel API):** Validar los "contratos" y la comunicación directa entre servicios usando Postman.
+4.  **Pruebas End-to-End (Nivel UI):** Validar los flujos de usuario completos desde el navegador, simulando la experiencia real.
+5.  **Pruebas Finales:** Una revisión rápida de regresión y usabilidad.
 
-*   **Backend (Java):** Validar que los `Services` y `Controllers` funcionan de forma aislada (usando Mocks para el `SentimentDsClient` y los `Repositories`).
-*   **Frontend (Angular):** Validar que los componentes (`sentiment-form`, `sentiment-result`) y servicios (`sentiment.service`) se comportan como se espera de forma aislada (usando `HttpClientTestingModule` y datos mock).
-*   **Modelo (Python):** Validar que el script de FastAPI responde correctamente a peticiones directas con diferentes tipos de texto.
+---
 
-**3.2. Pruebas de Integración (Foco principal de QA)**
+### **3. Configuración del Entorno de Pruebas**
 
-El objetivo es verificar que los "contratos" entre servicios se cumplen. Se usará **Postman** (o similar) para las pruebas de API.
+**Meta:** Asegurar que toda la aplicación está correctamente desplegada y accesible para las pruebas.
 
-*   **Caso de Prueba INT-01: Backend <-> Modelo FastAPI**
-    *   **Descripción:** Validar que el `SentimentBackendApplication` (a través de `SentimentDsClient`) puede comunicarse con el servicio de FastAPI.
-    *   **Pasos:**
-        1.  Enviar una petición `POST` al endpoint de análisis del Backend (ej. `/api/sentiment`).
-        2.  Verificar que el Backend llama correctamente al servicio de FastAPI.
-        3.  Verificar que el Backend procesa la respuesta del modelo (positiva, negativa, neutral) y la devuelve en el formato esperado.
-    *   **Escenarios:**
-        *   Texto válido (frases positivas, negativas, neutrales).
-        *   Conexión fallida con el modelo (¿qué responde el Backend? Debería ser un error 503 o similar).
-        *   Timeout del modelo (¿el Backend maneja la espera y responde con un error?).
+*   **Paso 1: Levantar el Stack Completo**
+    *   **Acción:** Abre una terminal en la raíz del proyecto y ejecuta el comando:
+      ```bash
+      docker-compose up --build
+      ```
+    *   **Verificación:** Espera a que todos los servicios (`frontend`, `backend`, `fastapi`, `db`) terminen de construir e iniciarse. Los logs no deben mostrar errores críticos de arranque.
 
-*   **Caso de Prueba INT-02: Backend <-> Base de Datos**
-    *   **Descripción:** Validar que el historial de análisis se guarda y se recupera correctamente.
-    *   **Pasos:**
-        1.  Realizar un análisis a través del endpoint `/api/sentiment`.
-        2.  Llamar al endpoint de historial (ej. `/api/history`).
-        3.  Verificar que el análisis realizado en el paso 1 aparece en la respuesta.
-    *   **Escenarios:**
-        *   Guardado de análisis individual.
-        *   Guardado de análisis por lote (`/api/batch/sentiment`).
-        *   Consulta de historial vacío.
-        *   Consulta de historial con múltiples registros.
+*   **Paso 2: Verificar Contenedores en Ejecución**
+    *   **Acción:** Abre una segunda terminal y ejecuta `docker ps`.
+    *   **Verificación:** Confirma que los contenedores para `sentiment-frontend`, `sentiment-backend`, `sentiment-model` y la base de datos están en estado `Up` o `Running`.
 
-*   **Caso de Prueba INT-03: Frontend <-> Backend**
-    *   **Descripción:** Validar que la aplicación de Angular se comunica correctamente con todos los endpoints del Backend.
-    *   **Pasos:** Usando la aplicación web, interactuar con las funcionalidades y verificar en las herramientas de desarrollador del navegador (pestaña Network) que las llamadas a la API se realizan correctamente.
-    *   **Escenarios:**
-        *   Llamada al `/api/sentiment` al enviar el formulario.
-        *   Llamada al `/api/history` al cargar la página de historial.
-        *   Llamada al `/api/stats` al cargar el componente de métricas.
-        *   Manejo de errores: ¿Qué muestra la UI si el backend devuelve un error 4xx o 5xx?
+---
 
-**3.3. Pruebas End-to-End (E2E) - Flujo de Usuario**
+### **4. Ejecución de Pruebas (Guía Paso a Paso)**
 
-Simulan la experiencia de un usuario real. Se pueden automatizar con herramientas como **Cypress** o **Selenium**.
+#### **Fase 1: Pruebas de Humo (Smoke Tests)**
 
-*   **Caso de Prueba E2E-01: Flujo de Análisis de Sentimiento Individual**
-    1.  Abrir la aplicación web.
-    2.  Navegar a la sección de análisis.
-    3.  Introducir el texto "Me encanta este producto" en el formulario.
-    4.  Hacer clic en "Analizar".
-    5.  **Resultado esperado:** La UI muestra un indicador de "Cargando..." y luego presenta un resultado "Positivo" (o similar) con su puntuación. La llamada al historial (`/api/history`) debe contener este nuevo registro.
+**Meta:** Confirmar que todos los servicios están "vivos" y accesibles.
 
-*   **Caso de Prueba E2E-02: Flujo de Análisis con Texto Negativo**
-    1.  Repetir E2E-01 con el texto "El servicio fue terrible".
-    2.  **Resultado esperado:** La UI muestra un resultado "Negativo" con su puntuación.
+*   **Acción:** Abre tu navegador web y comprueba los siguientes puntos de acceso:
+    1.  **Frontend App:** `http://localhost:4200`
+    2.  **Backend Docs:** `http://localhost:8080/swagger-ui/index.html`
+    3.  **Modelo Docs:** `http://localhost:8000/docs`
+*   **Verificación:**
+    *   La aplicación web de Angular debe cargar sin errores en la consola.
+    *   La documentación de Swagger UI del Backend debe ser visible.
+    *   La documentación de la API de FastAPI debe ser visible.
 
-*   **Caso de Prueba E2E-03: Visualización de Historial y Estadísticas**
-    1.  Navegar a la página de "Historial".
-    2.  **Resultado esperado:** Se muestran los análisis de los casos E2E-01 y E2E-02.
-    3.  Navegar a la página o sección de "Estadísticas".
-    4.  **Resultado esperado:** Las métricas reflejan 1 análisis positivo y 1 negativo.
+#### **Fase 2: Pruebas de Integración (Nivel API con Postman)**
 
-**3.4. Pruebas No Funcionales**
+**Meta:** Validar que los servicios se comunican correctamente entre sí.
 
-*   **Usabilidad (UX/UI):**
-    *   ¿Son claros los mensajes de error?
-    *   ¿El flujo de la aplicación es intuitivo?
-    *   ¿La retroalimentación visual (spinners de carga, notificaciones) es adecuada?
-*   **Compatibilidad:**
-    *   Probar en los navegadores web más comunes (Chrome, Firefox).
+*   **INT-01: Backend <-> Modelo (Happy Path)**
+    *   **Acción:** En Postman, envía una petición `POST` a `http://localhost:8080/api/sentiment` con el siguiente `body` (raw, JSON):
+      ```json
+      { "text": "Este producto es absolutamente maravilloso." }
+      ```
+    *   **Verificación:** Recibir una respuesta `200 OK` con un JSON que contenga `"sentiment": "POSITIVE"`.
 
-#### **4. Entorno y Herramientas**
+*   **INT-02: Backend <-> Base de Datos (Persistencia)**
+    *   **Acción:** En Postman, envía una petición `GET` a `http://localhost:8080/api/history`.
+    *   **Verificación:** Recibir una respuesta `200 OK` con un array JSON que contenga el análisis realizado en `INT-01`.
 
-*   **Entorno:** Se utilizará la configuración de `docker-compose` en un entorno limpio para levantar toda la infraestructura (Frontend, Backend, Modelo, Base de Datos).
-*   **Herramientas Sugeridas:**
-    *   **Postman:** Para pruebas de API (Integración).
-    *   **Navegador (Herramientas de Desarrollador):** Para inspección de tráfico Frontend <-> Backend.
-    *   **Cypress/Selenium:** (Opcional) Para automatización de pruebas E2E.
+*   **INT-03: Backend <-> Modelo (Manejo de Error)**
+    *   **Acción:**
+        1. Detén el contenedor del modelo: `docker-compose stop sentiment-model`.
+        2. Repite la petición del caso `INT-01`.
+    *   **Verificación:** Recibir un error `5xx` (ej. `503 Service Unavailable` o `500 Internal Server Error`), confirmando que el Backend maneja la falla de su dependencia.
+    *   **Limpieza:** Reinicia el contenedor: `docker-compose start sentiment-model`.
+
+*   **INT-04: Backend Batch Analysis (API-Only)**
+    *   **Nota:** Esta funcionalidad no está expuesta en la UI actual.
+    *   **Acción:** Envía una petición `POST` a `http://localhost:8080/api/batch/sentiment` con el `body`:
+      ```json
+      { "texts": ["El primero es genial", "El segundo es terrible"] }
+      ```
+    *   **Verificación:** Recibir una respuesta `200 OK` con un array de resultados. Luego, verificar que ambos análisis aparecen en el endpoint de historial (`GET /api/history`).
+
+#### **Fase 3: Pruebas End-to-End (Nivel UI)**
+
+**Meta:** Validar los flujos de usuario completos desde el navegador.
+
+*   **E2E-01: Flujo de Análisis (Positivo)**
+    *   **Acción:** En `http://localhost:4200`, introduce "Me encanta este nuevo diseño, es muy fácil de usar" y haz clic en "Analizar".
+    *   **Verificación:** La UI muestra un spinner de carga y luego una tarjeta de resultado marcando el sentimiento como "Positivo".
+
+*   **E2E-02: Flujo de Análisis (Negativo)**
+    *   **Acción:** Introduce "La página es muy lenta y no encuentro nada" y haz clic en "Analizar".
+    *   **Verificación:** La UI muestra un resultado "Negativo".
+
+*   **E2E-03: Flujo de Análisis (Neutral)**
+    *   **Acción:** Introduce "El reporte será entregado mañana" y haz clic en "Analizar".
+    *   **Verificación:** La UI muestra un resultado "Neutral".
+
+*   **E2E-04: Validación de Historial y Métricas en UI**
+    *   **Acción:** Refresca la página.
+    *   **Verificación:**
+        1. Las tarjetas de resultados bajo el formulario deben mostrar los 3 análisis anteriores.
+        2. El componente de métricas debe reflejar las estadísticas correctas (1 Positivo, 1 Negativo, 1 Neutral).
+
+*   **E2E-05: Manejo de Errores en UI (Backend caído)**
+    *   **Acción:**
+        1. Detén el backend: `docker-compose stop sentiment-backend`.
+        2. Intenta realizar un nuevo análisis desde la UI.
+    *   **Verificación:** La aplicación no debe romperse. Debe mostrar un mensaje de error claro al usuario (ej. "Error al contactar el servidor").
+    *   **Limpieza:** Reinicia el backend: `docker-compose start sentiment-backend`.
+
+#### **Fase 4: Pruebas Finales**
+
+*   **REG-01: Prueba de Regresión Rápida**
+    *   **Acción:** Repite el caso `E2E-01`.
+    *   **Verificación:** Confirmar que la funcionalidad principal sigue intacta después de reiniciar servicios.
+
+*   **UX-01: Revisión de Usabilidad**
+    *   **Acción:** Navega por toda la aplicación.
+    *   **Verificación:** Revisa que los textos sean claros, que no haya errores de tipeo, que los elementos estén bien alineados y que la experiencia general sea fluida e intuitiva.
