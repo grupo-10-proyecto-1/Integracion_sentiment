@@ -246,7 +246,10 @@ def predict(data: TextInput):
 # ============================================================
 # 10) Lógica de inferencia (detección de idioma + selección modelo)
 # ============================================================
-
+def validar_texto_input(text: str) -> None:
+    if text is None or not str(text).strip():
+        raise HTTPException(status_code=400, detail="Texto vacío o inválido")
+    
 def analyze_sentiment(text: str):
     validar_texto_input(text)
 
