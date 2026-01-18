@@ -1,0 +1,90 @@
+{
+    "info": {
+        "name": "QA Integration Tests (Dev4)",
+        "description": "Colección de pruebas de integración para validar Backend, Modelo y Persistencia.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "INT-01: Happy Path (Positive)",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"text\": \"Este producto es absolutamente maravilloso.\"\n}"
+                },
+                "url": {
+                    "raw": "http://localhost:8080/api/sentiment",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "api",
+                        "sentiment"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "INT-02: Verify History",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "http://localhost:8080/api/history",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "api",
+                        "history"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "INT-03: Resilience Check (Model Down)",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"text\": \"Prueba de fallo\"\n}"
+                },
+                "url": {
+                    "raw": "http://localhost:8080/api/sentiment",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "api",
+                        "sentiment"
+                    ]
+                },
+                "description": "Ejecutar esto con el contenedor sentiment-model detenido."
+            },
+            "response": []
+        }
+    ]
+}
