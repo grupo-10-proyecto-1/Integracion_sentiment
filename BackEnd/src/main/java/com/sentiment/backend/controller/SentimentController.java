@@ -10,7 +10,7 @@ import com.sentiment.backend.service.SentimentService;
 
 
 @RestController
-@RequestMapping("/sentiment")
+@RequestMapping("/api/sentiment")
 public class SentimentController {
 
     private final SentimentService sentimentService;

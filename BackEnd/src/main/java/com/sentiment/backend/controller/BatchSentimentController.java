@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/sentiment")
+@RequestMapping("/api/sentiment")
 public class BatchSentimentController {
 
     private final SentimentService service;
