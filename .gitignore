@@ -56,3 +56,9 @@ data/
 
 # Python virtual environments
 .integradorEnv/
+
+# Node dependencies
+node_modules/
+# Cypress artifacts
+FrontEnd/cypress/screenshots/
+FrontEnd/cypress/videos/

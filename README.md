@@ -1,5 +1,7 @@
 # 🎭 Integración Sentiment Analysis - MVP
 
+> **👨‍⚖️ Para el Jurado:** Ver Guía Rápida de Evaluación (2 min)
+
 Sistema completo de análisis de sentimientos integrado:
 - **FrontEnd**: Angular + Tailwind (Puerto 4200)
 - **BackEnd**: Java Spring Boot (Puerto 8080)
@@ -15,7 +17,8 @@ Para levantar todo el sistema unificado (Backend, Frontend, IA) con un solo coma
 2.  Ejecuta en la raíz del proyecto:
 
 ```powershell
-docker-compose up --build
+docker-compose up --build # en windows
+sudo docker-compose up --build # en linux
 ```
 
 3.  Acceder a la aplicación:

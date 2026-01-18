@@ -6,15 +6,21 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import com.sentiment.backend.dto.ErrorResponse;
 
 import org.springframework.web.client.HttpStatusCodeException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Objects;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);   
 
     // ==============================
     // 400: Errores de validación (@Valid)
@@ -89,10 +95,24 @@ public class GlobalExceptionHandler {
     }
 
     // ==============================
+    // 404: Recurso no encontrado (Endpoint inexistente)
+    // ==============================
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFound(NoResourceFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponse(
+                        "El endpoint solicitado no existe.",
+                        "RESOURCE_NOT_FOUND"
+                ));
+    }
+
+    // ==============================
     // 500: Error genérico no controlado
     // ==============================
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneric(Exception ex) {
+        log.error("Unhandled exception", ex); // Imprimir error en logs para depuración
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponse(

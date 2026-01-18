@@ -14,7 +14,7 @@ from transformers import (
     AutoTokenizer,
     AutoModelForSequenceClassification,
     BertTokenizer,
-    BertForSequenceClassification
+    BertForSequenceClassification,
 )
 
 # ============================================================
@@ -28,6 +28,7 @@ MAX_LENGTH = 256
 # ============================================================
 # 3) Pipeline 1: BETO (BERT) para español (es)
 # ============================================================
+
 
 class BETOPipeline:
     def __init__(self, model_dir: str):
@@ -46,13 +47,17 @@ class BETOPipeline:
         # 3.2 Cargar tokenizer local
         # ----------------------------
         tokenizer_dir = os.path.normpath(os.path.join(model_dir, "tokenizer"))
-        self.tokenizer = BertTokenizer.from_pretrained(tokenizer_dir, local_files_only=True)
+        self.tokenizer = BertTokenizer.from_pretrained(
+            tokenizer_dir, local_files_only=True
+        )
 
         # ----------------------------
         # 3.3 Cargar pesos del modelo (state_dict)
         # ----------------------------
         checkpoint_path = os.path.join(model_dir, "model.pth")
-        checkpoint = torch.load(checkpoint_path, map_location=self.device)
+        checkpoint = torch.load(
+            checkpoint_path, map_location=self.device, weights_only=True
+        )
 
         # ----------------------------
         # 3.4 Renombrar keys del checkpoint (compatibilidad)
@@ -71,8 +76,7 @@ class BETOPipeline:
         # 3.5 Construir modelo base + cargar pesos
         # ----------------------------
         self.model = BertForSequenceClassification.from_pretrained(
-            "dccuchile/bert-base-spanish-wwm-cased",
-            num_labels=len(self.class_names)
+            "dccuchile/bert-base-spanish-wwm-cased", num_labels=len(self.class_names)
         )
 
         self.model.load_state_dict(new_checkpoint)
@@ -101,7 +105,7 @@ class BETOPipeline:
             max_length=self.max_len,
             truncation=True,
             padding="max_length",
-            return_tensors="pt"
+            return_tensors="pt",
         )
 
         input_ids = encoding["input_ids"].to(self.device)
@@ -123,6 +127,7 @@ class BETOPipeline:
 # ============================================================
 # 4) Pipeline 2: RoBERTa para portugués (pt)
 # ============================================================
+
 
 class RobertaPipeline:
     def __init__(self, model_dir: str):
@@ -179,13 +184,14 @@ class RobertaPipeline:
 # 5) Carga de modelos (UNA sola vez al iniciar la API)
 # ============================================================
 
-pipeline_es = BETOPipeline("models/model_b_es")   # BETO(BERT) ES
-pipeline_pt = RobertaPipeline("models/model_pt")  # RoBERTa PT
+pipeline_es = BETOPipeline("/app/models/model_b_es")  # BETO(BERT) ES
+pipeline_pt = RobertaPipeline("/app/models/model_pt")  # RoBERTa PT
 
 
 # ============================================================
 # 6) Esquemas Pydantic (Entrada / Salida)
 # ============================================================
+
 
 class TextInput(BaseModel):
     text: str = Field(..., min_length=1, description="Texto a analizar")
@@ -209,13 +215,14 @@ class PredictResponse(BaseModel):
 app = FastAPI(
     title="Sentiment DS API",
     version="1.0.0",
-    description="Microservicio DS para análisis de sentimiento (ES/PT)."
+    description="Microservicio DS para análisis de sentimiento (ES/PT).",
 )
 
 
 # ============================================================
 # 8) Endpoints base
 # ============================================================
+
 
 @app.get("/")
 def root():
@@ -233,6 +240,7 @@ def health():
 # 9) Endpoint principal /predict
 # ============================================================
 
+
 @app.post("/predict", response_model=PredictResponse)
 def predict(data: TextInput):
     """
@@ -249,14 +257,17 @@ def predict(data: TextInput):
 def validar_texto_input(text: str) -> None:
     if text is None or not str(text).strip():
         raise HTTPException(status_code=400, detail="Texto vacío o inválido")
-    
+
+
 def analyze_sentiment(text: str):
     validar_texto_input(text)
 
     try:
         langs = detect_langs(text)
     except LangDetectException:
-        raise HTTPException(status_code=400, detail="No se pudo detectar el idioma del texto")
+        raise HTTPException(
+            status_code=400, detail="No se pudo detectar el idioma del texto"
+        )
 
     language = langs[0].lang
     confidence_lang = langs[0].prob
@@ -264,7 +275,7 @@ def analyze_sentiment(text: str):
     if confidence_lang < 0.60:
         raise HTTPException(
             status_code=400,
-            detail="No se pudo determinar el idioma con suficiente confianza"
+            detail="No se pudo determinar el idioma con suficiente confianza",
         )
 
     # Selección del pipeline según idioma
@@ -275,7 +286,7 @@ def analyze_sentiment(text: str):
     else:
         raise HTTPException(
             status_code=400,
-            detail="Idioma no soportado. Solo se admite español (es) y portugués (pt)."
+            detail="Idioma no soportado. Solo se admite español (es) y portugués (pt).",
         )
 
     # Predicción
@@ -292,4 +303,3 @@ def analyze_sentiment(text: str):
         return Prevision.NEGATIVO, confidence
     else:
         return Prevision.NEUTRO, confidence
-

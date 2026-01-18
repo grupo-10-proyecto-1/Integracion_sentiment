@@ -21,7 +21,7 @@ public class HealthController {
         this.dsClient = dsClient;
     }
 
-    @GetMapping("/health") // "/health"
+    @GetMapping("/api/health")
     public ResponseEntity<Map<String, String>> health() {
         return ResponseEntity.ok(Map.of(
                 "status", "UP",
@@ -29,7 +29,7 @@ public class HealthController {
         ));
     }
 
-    @GetMapping("/health/model")
+    @GetMapping("/api/health/model")
     public ResponseEntity<Map<String, String>> healthModel() {
 
         // Si estamos en mock, el “modelo” es conceptualmente UP

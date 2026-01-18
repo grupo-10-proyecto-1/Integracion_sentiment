@@ -17,7 +17,7 @@ public class StatsController {
         this.statsService = statsService;
     }
 
-    @GetMapping("/stats")
+    @GetMapping("/api/stats")
     public StatResponseDTO getStats(@RequestParam(defaultValue = "100") int cantidad) {
         if (cantidad < 1) cantidad = 1;
         if (cantidad > 1000) cantidad = 1000;

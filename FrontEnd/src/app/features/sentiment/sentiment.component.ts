@@ -11,7 +11,7 @@ import { SentimentFormComponent } from './components/sentiment-form/sentiment-fo
 import { SentimentResultComponent } from './components/sentiment-result/sentiment-result.component';
 import { HeaderComponent } from '../../shared/components/header/header.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
-import { MockCarouselComponent } from "../../shared/components/mock-carousel/mock-carousel.component";
+import { MockCarouselComponent } from '../../shared/components/mock-carousel/mock-carousel.component';
 
 @Component({
   selector: 'app-sentiment',

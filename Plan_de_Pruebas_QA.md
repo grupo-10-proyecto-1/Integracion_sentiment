@@ -1,8 +1,8 @@
 # Plan de Pruebas y Guía de Ejecución de QA
 
-**Versión:** 2.0
+**Versión:** 3.0 (Final - Ejecutado)
 **Autor:** Beto (Dev4 - QA)
-**Fecha:** 16 de enero de 2026
+**Fecha:** 18 de enero de 2026
 
 ---
 
@@ -93,13 +93,6 @@ La estrategia es ejecutar las pruebas en fases incrementales, asegurando primero
     *   **Verificación:** Recibir un error `5xx` (ej. `503 Service Unavailable` o `500 Internal Server Error`), confirmando que el Backend maneja la falla de su dependencia.
     *   **Limpieza:** Reinicia el contenedor: `docker-compose start sentiment-model`.
 
-*   **INT-04: Backend Batch Analysis (API-Only)**
-    *   **Nota:** Esta funcionalidad no está expuesta en la UI actual.
-    *   **Acción:** Envía una petición `POST` a `http://localhost:8080/api/batch/sentiment` con el `body`:
-      ```json
-      { "texts": ["El primero es genial", "El segundo es terrible"] }
-      ```
-    *   **Verificación:** Recibir una respuesta `200 OK` con un array de resultados. Luego, verificar que ambos análisis aparecen en el endpoint de historial (`GET /api/history`).
 
 #### **Fase 3: Pruebas End-to-End (Nivel UI)**
 
