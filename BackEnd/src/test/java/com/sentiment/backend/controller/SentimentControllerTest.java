@@ -42,7 +42,7 @@ class SentimentControllerTest {
         when(sentimentService.predict(anyString()))
                 .thenReturn(new SentimentResponse(Prevision.POSITIVO, 0.99));
 
-        mockMvc.perform(post("/sentiment")
+        mockMvc.perform(post("/api/sentiment")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"text\": \"Me gusta este proyecto\"}"))
                 .andExpect(status().isOk())
@@ -51,7 +51,7 @@ class SentimentControllerTest {
 
     @Test
     void whenEmptyInput_thenReturn400() throws Exception {
-        mockMvc.perform(post("/sentiment")
+        mockMvc.perform(post("/api/sentiment")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"text\": \"\"}"))
                 .andExpect(status().isBadRequest());
@@ -62,20 +62,20 @@ class SentimentControllerTest {
         when(statsService.getStats(anyInt()))
                 .thenReturn(new StatResponseDTO(100, 0L, 0L, 0L, 0L, 0.0, 0.0, 0.0));
 
-        mockMvc.perform(get("/stats"))
+        mockMvc.perform(get("/api/stats"))
                 .andExpect(status().isOk());
     }
 
     @Test
     void whenGetHealth_thenReturns200() throws Exception {
-        mockMvc.perform(get("/health"))
+        mockMvc.perform(get("/api/health"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("UP"));
     }
 
     @Test
     void whenGetModelHealth_thenReturns200() throws Exception {
-        mockMvc.perform(get("/health/model"))
+        mockMvc.perform(get("/api/health/model"))
                 .andExpect(status().isOk());
     }
 }
