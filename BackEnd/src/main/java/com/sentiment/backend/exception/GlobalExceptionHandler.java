@@ -12,10 +12,15 @@ import com.sentiment.backend.dto.ErrorResponse;
 
 import org.springframework.web.client.HttpStatusCodeException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Objects;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);   
 
     // ==============================
     // 400: Errores de validación (@Valid)
@@ -107,7 +112,7 @@ public class GlobalExceptionHandler {
     // ==============================
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneric(Exception ex) {
-        ex.printStackTrace(); // Imprimir error en logs para depuración
+        log.error("Unhandled exception", ex); // Imprimir error en logs para depuración
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponse(
