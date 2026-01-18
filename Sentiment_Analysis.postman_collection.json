@@ -1,0 +1,153 @@
+{
+    "info": {
+        "_postman_id": "a1b2c3d4-e5f6-7890-1234-56789abcdef0",
+        "name": "Sentiment Analysis Integration",
+        "description": "Colección de pruebas de integración para el proyecto Sentiment Analysis. Ejecutadas y validadas mediante la extensión de Postman para VS Code.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Health Check",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/api/health",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "api",
+                        "health"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Analyze Sentiment (Positive)",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"text\": \"El equipo ha hecho un trabajo fenomenal con la integración.\"\n}"
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/api/sentiment",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "api",
+                        "sentiment"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Analyze Sentiment (Negative)",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"text\": \"El sistema es demasiado lento y confuso.\"\n}"
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/api/sentiment",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "api",
+                        "sentiment"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Get History",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/api/history",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "api",
+                        "history"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Get Stats",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/api/stats",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "api",
+                        "stats"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Batch Analysis",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"texts\": [\n        \"Excelente servicio\",\n        \"Pésima atención\",\n        \"Normal\"\n    ]\n}"
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/api/sentiment/batch",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "api",
+                        "sentiment",
+                        "batch"
+                    ]
+                }
+            },
+            "response": []
+        }
+    ],
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost",
+            "type": "string"
+        }
+    ]
+}

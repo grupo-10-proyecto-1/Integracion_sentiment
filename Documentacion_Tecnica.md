@@ -26,7 +26,7 @@ El sistema sigue un patrón de arquitectura distribuida con tres componentes pri
 
 ## 3. Flujo de Datos (Data Flow)
 1.  **Input:** El usuario ingresa texto en el FrontEnd.
-2.  **Request:** Angular envía `POST /sentiment` al BackEnd (Java).
+2.  **Request:** Angular envía `POST /api/sentiment` al BackEnd (Java).
 3.  **Orquestación:** Java valida el input y redirige la petición al microservicio Python (`POST /predict`).
 4.  **Inferencia:** Python detecta el idioma, selecciona el modelo adecuado y retorna la predicción (`POSITIVO`/`NEGATIVO` + Probabilidad).
 5.  **Persistencia:** Java recibe la predicción, guarda la métrica en H2 y retorna la respuesta al FrontEnd.
@@ -76,4 +76,3 @@ Para el entorno de producción, se ha implementado una arquitectura orquestada c
 *   **Error de Conexión Docker:** Si aparece `open //./pipe/dockerDesktopLinuxEngine...`, asegurar que Docker Desktop esté corriendo.
 *   **Conflicto de Nombres:** Si un contenedor ya existe, ejecutar `docker rm -f <nombre_contenedor>`.
 *   **API Desconectada:** Verificar que el Frontend apunte a `/api` y no a una URL absoluta en `environment.ts`.
-

@@ -1,5 +1,7 @@
 # 🎭 Integración Sentiment Analysis - MVP
 
+> **👨‍⚖️ Para el Jurado:** Ver Guía Rápida de Evaluación (2 min)
+
 Sistema completo de análisis de sentimientos integrado:
 - **FrontEnd**: Angular + Tailwind (Puerto 4200)
 - **BackEnd**: Java Spring Boot (Puerto 8080)
