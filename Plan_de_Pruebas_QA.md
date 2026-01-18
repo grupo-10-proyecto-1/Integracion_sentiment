@@ -1,8 +1,8 @@
 # Plan de Pruebas y Guía de Ejecución de QA
 
-**Versión:** 2.0
+**Versión:** 2.1
 **Autor:** Beto (Dev4 - QA)
-**Fecha:** 16 de enero de 2026
+**Fecha:** 17 de enero de 2026
 
 ---
 

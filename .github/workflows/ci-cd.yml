@@ -62,6 +62,6 @@ jobs:
           cache: 'npm'
           cache-dependency-path: FrontEnd/package-lock.json
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
       - name: Build
         run: npm run build -- --configuration=production

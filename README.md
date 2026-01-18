@@ -72,4 +72,5 @@ npm start
 -   **Java 17** (Spring Boot 3.2.4)
 -   **Python 3.x** (FastAPI, Scikit-learn)
 -   **Angular 17** (Node.js)
+-   **Cypress** (E2E Testing Automatizado)
 -   **GitHub Actions** (CI/CD Pipeline Automatizado)

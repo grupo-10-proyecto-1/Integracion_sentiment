@@ -1,16 +1,14 @@
 package com.sentiment.backend.controller;
 
-import jakarta.validation.Valid;
+import com.sentiment.backend.dto.SentimentResponse;
+import com.sentiment.backend.service.SentimentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.sentiment.backend.dto.SentimentRequest;
-import com.sentiment.backend.dto.SentimentResponse;
-import com.sentiment.backend.service.SentimentService;
-
+import java.util.Map;
 
 @RestController
-@RequestMapping("/sentiment")
+@RequestMapping("/api/sentiment")
 public class SentimentController {
 
     private final SentimentService sentimentService;
@@ -20,9 +18,8 @@ public class SentimentController {
     }
 
     @PostMapping
-    public ResponseEntity<SentimentResponse> analizar(@Valid @RequestBody SentimentRequest request) {
-        SentimentResponse response = sentimentService.predict(request.text().trim());
-        return ResponseEntity.ok(response);
+    public ResponseEntity<SentimentResponse> predict(@RequestBody Map<String, String> request) {
+        String text = request.get("text");
+        return ResponseEntity.ok(sentimentService.predict(text));
     }
-
 }

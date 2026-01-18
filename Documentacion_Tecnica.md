@@ -36,6 +36,7 @@ El sistema sigue un patrón de arquitectura distribuida con tres componentes pri
 - **Lenguajes:** Java 17, Python 3.10, TypeScript 5.
 - **Frameworks:** Spring Boot 3.2.4, FastAPI 0.109, Angular 17.
 - **Librerías de IA:** Scikit-learn, Joblib, Langdetect.
+- **Testing:** Cypress (E2E Automation), Postman (API Integration).
 - **Build Tools:** Maven, NPM.
 - **Base de Datos:** H2 Database Engine.
 
@@ -76,4 +77,3 @@ Para el entorno de producción, se ha implementado una arquitectura orquestada c
 *   **Error de Conexión Docker:** Si aparece `open //./pipe/dockerDesktopLinuxEngine...`, asegurar que Docker Desktop esté corriendo.
 *   **Conflicto de Nombres:** Si un contenedor ya existe, ejecutar `docker rm -f <nombre_contenedor>`.
 *   **API Desconectada:** Verificar que el Frontend apunte a `/api` y no a una URL absoluta en `environment.ts`.
-

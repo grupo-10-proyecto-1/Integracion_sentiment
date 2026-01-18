@@ -56,3 +56,14 @@ data/
 
 # Python virtual environments
 .integradorEnv/
+
+# Los videos de las pruebas ocupan mucho espacio.
+FrontEnd/cypress/videos/: 
+#Las capturas de pantalla.
+FrontEnd/cypress/screenshots/: 
+# Dependencias de Node.
+node_modules/
+# Compilados de Java.
+BackEnd/target/: 
+# Caché de Python
+FastAPI/__pycache__/: 
