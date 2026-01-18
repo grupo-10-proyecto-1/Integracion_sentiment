@@ -6,6 +6,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import com.sentiment.backend.dto.ErrorResponse;
 
@@ -89,10 +90,24 @@ public class GlobalExceptionHandler {
     }
 
     // ==============================
+    // 404: Recurso no encontrado (Endpoint inexistente)
+    // ==============================
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFound(NoResourceFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponse(
+                        "El endpoint solicitado no existe.",
+                        "RESOURCE_NOT_FOUND"
+                ));
+    }
+
+    // ==============================
     // 500: Error genérico no controlado
     // ==============================
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneric(Exception ex) {
+        ex.printStackTrace(); // Imprimir error en logs para depuración
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponse(

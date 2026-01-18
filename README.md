@@ -15,7 +15,8 @@ Para levantar todo el sistema unificado (Backend, Frontend, IA) con un solo coma
 2.  Ejecuta en la raíz del proyecto:
 
 ```powershell
-docker-compose up --build
+docker-compose up --build # en windows
+sudo docker-compose up --build # en linux
 ```
 
 3.  Acceder a la aplicación:

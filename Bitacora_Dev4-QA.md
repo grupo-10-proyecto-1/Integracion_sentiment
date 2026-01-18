@@ -72,12 +72,35 @@ ef1294ffcefc   nginx:alpine                               "/docker-entrypoint.�
 ### Paso 1.3: Pruebas de Humo (Smoke Tests)
 
 *   **Acción:** Se accedió a los endpoints principales de cada servicio a través del navegador.
-*   **Resultado:** PENDIENTE de confirmación del usuario. **(Por favor, Beto, confirma manualmente estos puntos en tu navegador)**
-    *   `http://localhost:4200` (Frontend): PENDIENTE
-    *   `http://localhost:8080/swagger-ui/index.html` (Backend Docs): PENDIENTE
-    *   `http://localhost:8000/docs` (Modelo Docs): PENDIENTE
+*   **Resultado:** **ÉXITO.** Confirmado por el usuario. Todos los servicios responden correctamente en sus puertos expuestos.
+    *   `http://localhost:4200` (Frontend): **OK**
+    *   `http://localhost:8080/swagger-ui/index.html` (Backend Docs): **OK**
+    *   `http://localhost:8000/docs` (Modelo Docs): **OK**
 
 ---
+
+## **Fecha: 16 de enero de 2026 - Fase 2: Pruebas de Integración (API)**
+
+### INT-01: Backend ↔ Modelo (Happy Path)
+*   **Acción:** POST `/api/sentiment` con texto de prueba.
+*   **Resultado:** *En espera de ejecución.*
+
+### INT-02: Backend ↔ Base de Datos (Persistencia)
+*   **Acción:** GET `/api/history` para verificar el guardado.
+*   **Resultado:** **FALLO.** El servidor respondió con `500 Internal Server Error` (`{"error":"Error interno del servidor","code":"INTERNAL_ERROR"}`).
+    *   **Diagnóstico:** Los logs indican que la aplicación inicia correctamente, pero al usar una base de datos H2 basada en archivo (`./data/sentimentdb`) dentro del contenedor, las tablas no se están creando automáticamente por defecto.
+    *   **Solución (Intento 1):** Se agregó `SPRING_JPA_HIBERNATE_DDL_AUTO=update`. **Resultado:** Falló nuevamente (posible problema de permisos de escritura en disco dentro del contenedor).
+    *   **Solución (Intento 2):** Se cambió la base de datos a modo memoria (`jdbc:h2:mem:sentimentdb`) en `docker-compose.yml`. **Resultado:** Persiste el error 500 al consultar el historial (`GET`) después de crear un registro (`POST`). Se requiere revisión profunda de logs para identificar error de código (posible fallo de serialización JSON).
+    *   **Acción de Debug:** Se habilitaron las variables `SERVER_ERROR_INCLUDE_STACKTRACE=always` en `docker-compose.yml` para visualizar la excepción directamente en la respuesta JSON de Postman, ya que los logs del contenedor no mostraban el stack trace completo.
+    *   **Hallazgo Crítico:** La respuesta JSON `{ "error": "Error interno del servidor", "code": "INTERNAL_ERROR" }` confirma que existe un `GlobalExceptionHandler` (`@ControllerAdvice`) que captura la excepción y oculta el stack trace, ignorando la configuración de Spring Boot. Se requiere inspección del código fuente (`Sentiment.java` y el manejador de excepciones) para encontrar la causa raíz (probablemente serialización).
+    *   **Solución (Intento 3):** Se agregó `SPRING_JACKSON_SERIALIZATION_FAIL_ON_EMPTY_BEANS=false` en `docker-compose.yml`. Esto suele corregir el error `InvalidDefinitionException` causado por proxies de Hibernate (Lazy Loading) al serializar entidades JPA a JSON.
+    *   **Hallazgo Definitivo (Logs):** El log mostró `NoResourceFoundException: No static resource api/history`. Esto indica que el endpoint `/api/history` **no existía** en el código. El error 500 era un falso positivo generado por el `GlobalExceptionHandler`.
+    *   **Solución Final:** Se creó la clase `HistoryController.java` mapeada a `/api/history` y se actualizó `GlobalExceptionHandler.java` para manejar correctamente los errores 404.
+
+### INT-03: Manejo de Errores (Resiliencia)
+*   **Acción:** Detener `sentiment-model` y enviar petición al Backend.
+*   **Resultado:** *En espera de ejecución.*
+    *   **Nota:** Se detectó un problema de permisos al intentar reiniciar el contenedor (`docker start`). Se requiere `sudo` o configuración de grupo docker.
 
 ## **Fecha: 16 de enero de 2026 - Actualización de Codebase**
 

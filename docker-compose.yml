@@ -2,15 +2,25 @@ services:
   sentiment-frontend:
     build: ./FrontEnd
     container_name: sentiment-frontend
+    ports:
+      - "4200:80"
     networks:
       - sentiment-net
 
   sentiment-backend:
     build: ./BackEnd
     container_name: sentiment-backend
+    ports:
+      - "8080:8080"
     environment:
       - SENTIMENT_MODE=python
       - PYTHON_API_BASE_URL=http://sentiment-model:8000
+      - SPRING_DATASOURCE_URL=jdbc:h2:mem:sentimentdb;DB_CLOSE_DELAY=-1
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SERVER_ERROR_INCLUDE_MESSAGE=always
+      - SERVER_ERROR_INCLUDE_BINDING_ERRORS=always
+      - SERVER_ERROR_INCLUDE_STACKTRACE=always
+      - SPRING_JACKSON_SERIALIZATION_FAIL_ON_EMPTY_BEANS=false
     depends_on:
       - sentiment-model
     networks:
