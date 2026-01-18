@@ -56,3 +56,6 @@ data/
 
 # Python virtual environments
 .integradorEnv/
+
+# Node dependencies
+node_modules/

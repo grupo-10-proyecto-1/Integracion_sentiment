@@ -108,3 +108,23 @@ ef1294ffcefc   nginx:alpine                               "/docker-entrypoint.鈥
 
 *   **Acci贸n:** Se verific贸 el archivo `FastAPI/main.py`.
 *   **Resultado:** **CONFIRMADO.** Las rutas de los modelos en `FastAPI/main.py` est谩n configuradas correctamente con rutas absolutas (`/app/models/model_es` y `/app/models/model_pt`). Esto asegura que el servicio `sentiment-model` pueda cargar sus modelos correctamente.
+
+## **Fecha: 18 de enero de 2026 - Ciclo de Re-ejecuci贸n (Validaci贸n Final)**
+
+### Resumen
+Se inicia una nueva ronda de pruebas completa tras la estabilizaci贸n de versiones (Angular 17), limpieza de dependencias y correcci贸n de endpoints.
+
+### Fase 1: Smoke Tests
+*   [ ] Frontend (`http://localhost:4200`): PENDIENTE
+*   [ ] Backend Docs (`http://localhost:8080/swagger-ui/index.html`): PENDIENTE
+*   [ ] Model Docs (`http://localhost:8000/docs`): PENDIENTE
+
+### Fase 2: Integraci贸n API (Postman)
+*   [ ] INT-01 (Happy Path): PENDIENTE
+*   [ ] INT-02 (History Persistence): PENDIENTE
+*   [ ] INT-03 (Resilience/Error): PENDIENTE
+
+### Fase 3: E2E (UI/Cypress)
+*   [ ] E2E-01 (Positivo): PENDIENTE
+*   [ ] E2E-02 (Negativo): PENDIENTE
+*   [ ] E2E-04 (Historial UI): PENDIENTE
