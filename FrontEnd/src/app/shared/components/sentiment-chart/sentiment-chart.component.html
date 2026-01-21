@@ -1,0 +1,428 @@
+<style>
+  /* Fix for "Unable to preventDefault inside passive event listener invocation" */
+  /* Fix for "Unable to preventDefault inside passive event listener invocation" */
+  .apexcharts-canvas {
+    touch-action: none;
+  }
+
+  /* Force white text for all ApexCharts elements to ensure visibility in PDF and Dark Mode */
+  ::ng-deep .apexcharts-legend-text {
+    color: #ffffff !important;
+    fill: #ffffff !important;
+  }
+  ::ng-deep .apexcharts-text {
+    fill: #ffffff !important;
+  }
+  ::ng-deep .apexcharts-xaxis-label,
+  ::ng-deep .apexcharts-yaxis-label {
+    fill: #ffffff !important;
+  }
+  ::ng-deep .apexcharts-title-text {
+    fill: #ffffff !important;
+  }
+</style>
+<div class="max-w-7xl mx-auto px-4 py-5" *ngIf="metrics">
+  <div
+    class="relative overflow-hidden bg-indigo-900/60 dark:bg-slate-900/60 backdrop-blur-3xl border border-indigo-500/10 dark:border-white/10 rounded-[2.5rem] shadow-2xl transition-all duration-500"
+  >
+    <div
+      class="w-full p-6 flex flex-col md:flex-row items-center justify-between"
+    >
+      <div class="flex items-center gap-4">
+        <div class="relative flex h-3 w-3">
+          <span
+            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"
+          ></span>
+          <span
+            class="relative inline-flex rounded-full h-3 w-3 bg-blue-500"
+          ></span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <h2 class="text-xl font-extrabold text-white tracking-tight">
+            Snapshot <span class="text-blue-500">General</span>
+          </h2>
+          <div class="flex items-center gap-3">
+            <p
+              class="text-xs text-indigo-200 dark:text-slate-500 font-medium uppercase tracking-wider"
+            >
+              Métricas Comparativas
+            </p>
+            <span
+              class="px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 text-[10px] font-bold border border-blue-500/30"
+            >
+              {{ metrics.total }} Analizados
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 mt-4 md:mt-0">
+        <div
+          class="flex items-center bg-slate-800/50 p-1 rounded-xl border border-white/5"
+        >
+          <button
+            (click)="exportToExcel()"
+            class="p-2 hover:bg-emerald-500/20 text-slate-400 hover:text-emerald-400 rounded-lg transition-all"
+            title="Excel"
+          >
+            <svg
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-width="2"
+                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+          </button>
+          <button
+            (click)="exportToPdf()"
+            class="p-2 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 rounded-lg transition-all"
+            title="PDF"
+          >
+            <svg
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-width="2"
+                d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+              />
+            </svg>
+          </button>
+          <button
+            (click)="exportToTxt()"
+            class="p-2 hover:bg-blue-500/20 text-slate-400 hover:text-blue-400 rounded-lg transition-all"
+            title="Texto"
+          >
+            <svg
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div #dashboardContent class="overflow-hidden">
+      <div
+        class="grid grid-cols-1 lg:grid-cols-2 gap-px bg-white/10 border-t border-indigo-500/10 dark:border-white/5"
+      >
+        <div class="bg-indigo-950/40 dark:bg-slate-900/40 p-5">
+          <div
+            class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4"
+          >
+            <div class="flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+              <h4
+                class="text-[11px] font-bold text-indigo-300 dark:text-slate-400 uppercase tracking-widest"
+              >
+                Tendencia Temporal
+              </h4>
+            </div>
+
+            <!-- Controls -->
+            <div class="flex items-center gap-3">
+              <!-- View Toggle -->
+              <div
+                class="flex bg-slate-800/50 rounded-lg p-0.5 border border-white/5"
+              >
+                <button
+                  (click)="setViewMode('WEEK')"
+                  [class.bg-indigo-600]="viewMode === 'WEEK'"
+                  [class.text-white]="viewMode === 'WEEK'"
+                  class="px-3 py-1 text-[10px] font-medium rounded-md transition-all text-slate-400 hover:text-white"
+                >
+                  Semana
+                </button>
+                <button
+                  (click)="setViewMode('MONTH')"
+                  [class.bg-indigo-600]="viewMode === 'MONTH'"
+                  [class.text-white]="viewMode === 'MONTH'"
+                  class="px-3 py-1 text-[10px] font-medium rounded-md transition-all text-slate-400 hover:text-white"
+                >
+                  Mes
+                </button>
+              </div>
+
+              <!-- Navigation -->
+              <div
+                class="flex items-center gap-2 bg-slate-800/50 rounded-lg p-0.5 border border-white/5"
+              >
+                <button
+                  (click)="prevPeriod()"
+                  class="p-1 text-slate-400 hover:text-white hover:bg-white/10 rounded transition-colors"
+                >
+                  <svg
+                    class="w-3 h-3"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 19l-7-7 7-7"
+                    />
+                  </svg>
+                </button>
+                <span
+                  class="text-[10px] font-medium text-slate-300 px-2 min-w-[80px] text-center select-none"
+                  >{{ dateRangeLabel }}</span
+                >
+                <button
+                  (click)="nextPeriod()"
+                  class="p-1 text-slate-400 hover:text-white hover:bg-white/10 rounded transition-colors"
+                >
+                  <svg
+                    class="w-3 h-3"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </button>
+              </div>
+              <!-- Maximize Button -->
+              <button
+                (click)="toggleTrendModal()"
+                class="p-1.5 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors ml-2"
+                title="Ampliar"
+              >
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <apx-chart
+            [series]="lineSeries"
+            [chart]="lineChart"
+            [colors]="colors"
+            [legend]="legendConfig"
+            [tooltip]="tooltipConfig"
+            [stroke]="strokeOptions"
+            [xaxis]="trendXAxis"
+            [yaxis]="trendYAxis"
+            [grid]="{ borderColor: 'rgba(255,255,255,0.05)' }"
+          ></apx-chart>
+        </div>
+
+        <div class="bg-indigo-950/40 dark:bg-slate-900/40 p-5">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            <h4
+              class="text-[11px] font-bold text-indigo-300 dark:text-slate-400 uppercase tracking-widest"
+            >
+              Mix
+            </h4>
+          </div>
+          <apx-chart
+            [series]="donutSeries"
+            [chart]="donutChart"
+            [labels]="labels"
+            [colors]="colors"
+            [legend]="legendConfig"
+            [tooltip]="tooltipConfig"
+            [plotOptions]="{ pie: { donut: { size: '70%' } } }"
+          ></apx-chart>
+        </div>
+
+        <div class="bg-indigo-950/40 dark:bg-slate-900/40 p-5">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+            <h4
+              class="text-[11px] font-bold text-indigo-300 dark:text-slate-400 uppercase tracking-widest"
+            >
+              Volumen
+            </h4>
+          </div>
+          <apx-chart
+            [series]="barSeries"
+            [chart]="barChart"
+            [colors]="colors"
+            [tooltip]="tooltipConfig"
+            [xaxis]="{
+              categories: labels,
+              labels: { style: { colors: '#ffffff' } }
+            }"
+            [yaxis]="{ labels: { style: { colors: '#ffffff' } } }"
+            [plotOptions]="{ bar: { borderRadius: 6, columnWidth: '40%' } }"
+          ></apx-chart>
+        </div>
+
+        <div class="bg-indigo-950/40 dark:bg-slate-900/40 p-5">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+            <h4
+              class="text-[11px] font-bold text-indigo-300 dark:text-slate-400 uppercase tracking-widest"
+            >
+              Impacto
+            </h4>
+          </div>
+          <apx-chart
+            [series]="radialSeries"
+            [chart]="radialChart"
+            [labels]="labels"
+            [colors]="colors"
+            [tooltip]="tooltipConfig"
+            [plotOptions]="radialPlotOptions"
+            [stroke]="radialStroke"
+          ></apx-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trend Modal -->
+  <div
+    *ngIf="showTrendModal"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200"
+  >
+    <div
+      class="bg-indigo-950/90 border border-white/10 rounded-2xl w-full max-w-5xl p-6 shadow-2xl relative"
+    >
+      <button
+        (click)="toggleTrendModal()"
+        class="absolute top-4 right-4 p-2 text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition-colors"
+      >
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+
+      <div
+        class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pr-12"
+      >
+        <div class="flex items-center gap-3">
+          <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+          <h2 class="text-xl font-bold text-white tracking-tight">
+            Análisis Detallado de Tendencia
+          </h2>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div
+            class="flex bg-slate-800/80 rounded-lg p-1 border border-white/10"
+          >
+            <button
+              (click)="setViewMode('WEEK')"
+              [class.bg-blue-600]="viewMode === 'WEEK'"
+              [class.text-white]="viewMode === 'WEEK'"
+              class="px-4 py-1.5 text-xs font-medium rounded-md transition-all text-slate-400 hover:text-white"
+            >
+              Semana
+            </button>
+            <button
+              (click)="setViewMode('MONTH')"
+              [class.bg-blue-600]="viewMode === 'MONTH'"
+              [class.text-white]="viewMode === 'MONTH'"
+              class="px-4 py-1.5 text-xs font-medium rounded-md transition-all text-slate-400 hover:text-white"
+            >
+              Mes
+            </button>
+          </div>
+          <div
+            class="flex items-center gap-2 bg-slate-800/80 rounded-lg p-1 border border-white/10"
+          >
+            <button
+              (click)="prevPeriod()"
+              class="p-1.5 text-slate-400 hover:text-white hover:bg-white/10 rounded transition-colors"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </button>
+            <span
+              class="text-xs font-medium text-white px-3 min-w-[100px] text-center select-none"
+              >{{ dateRangeLabel }}</span
+            >
+            <button
+              (click)="nextPeriod()"
+              class="p-1.5 text-slate-400 hover:text-white hover:bg-white/10 rounded transition-colors"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <apx-chart
+        [series]="lineSeries"
+        [chart]="{
+          type: 'area',
+          height: 450,
+          toolbar: { show: false },
+          animations: { enabled: true }
+        }"
+        [colors]="colors"
+        [legend]="legendConfig"
+        [tooltip]="tooltipConfig"
+        [stroke]="strokeOptions"
+        [xaxis]="trendXAxis"
+        [yaxis]="trendYAxis"
+        [grid]="{ borderColor: 'rgba(255,255,255,0.05)' }"
+      ></apx-chart>
+    </div>
+  </div>
+</div>

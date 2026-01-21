@@ -1,51 +1,149 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { SentimentService } from '../../../core/services/sentiment.service';
 
 @Component({
   selector: 'app-mock-carousel',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './mock-carousel.component.html',
-  styleUrl: './mock-carousel.component.css'
+  styleUrl: './mock-carousel.component.css',
 })
 export class MockCarouselComponent implements OnInit, OnDestroy {
-
   currentIndex = 0;
-  intervalId?: number;
   isMobile = false;
 
-  mocks = [
-    {
-      text: 'Este producto es increíble, funciona mejor de lo que esperaba.',
-      sentiment: 'POSITIVE',
-      probability: 0.96,
-      id: 1
-    },
-    {
-      text: 'El servicio cumple con lo básico, no es malo pero tampoco destaca.',
-      sentiment: 'NEUTRAL',
-      probability: 0.96,
-      id: 2
-    },
-    {
-      text: 'Muy mala experiencia, el sistema falla y nadie responde.',
-      sentiment: 'NEGATIVE',
-      probability: 0.81,
-      id: 3
-    }
-  ];
+  // 🔹 Todos los registros del backend
+  allMocks: any[] = [];
 
+  // 🔹 Los 3 visibles (1 por sentimiento)
+  mocks: any[] = [];
+
+  // 🔹 Colas balanceadas
+  positiveQueue: any[] = [];
+  negativeQueue: any[] = [];
+  neutralQueue: any[] = [];
+
+  // 🔹 Intervalos
+  carouselInterval?: number;
+  rotationInterval?: number;
+
+  readonly CAROUSEL_TIME = 5000; // mobile
+  readonly ROTATION_TIME = 6000; // desktop
+
+  constructor(private sentimentService: SentimentService) {}
+
+  // ================================
+  // 🚀 LIFECYCLE
+  // ================================
   ngOnInit() {
     this.checkScreen();
-    if (this.isMobile) {
-      this.startCarousel();
-    }
+    this.loadHistory();
   }
 
   ngOnDestroy() {
     this.stopCarousel();
+    this.stopRotation();
   }
 
+  // ================================
+  // 📡 DATA
+  // ================================
+  reload() {
+    this.loadHistory();
+  }
+
+  private loadHistory() {
+    this.sentimentService.getHistory().subscribe((res) => {
+      this.allMocks = res || [];
+
+      this.resetQueues();
+      this.pickBalancedMocks();
+
+      if (this.isMobile) {
+        this.startCarousel();
+      } else {
+        this.startRotation();
+      }
+    });
+  }
+
+  // ================================
+  // 🎯 BALANCED LOGIC
+  // ================================
+  private pickBalancedMocks() {
+    if (
+      !this.positiveQueue.length ||
+      !this.negativeQueue.length ||
+      !this.neutralQueue.length
+    ) {
+      this.resetQueues();
+    }
+
+    const positive = this.positiveQueue.shift();
+    const negative = this.negativeQueue.shift();
+    const neutral = this.neutralQueue.shift();
+
+    this.mocks = [positive, negative, neutral].filter(Boolean);
+    this.currentIndex = 0;
+  }
+
+  private resetQueues() {
+    this.positiveQueue = this.shuffle(
+      this.allMocks.filter((m) => m.sentiment === 'POSITIVE')
+    );
+
+    this.negativeQueue = this.shuffle(
+      this.allMocks.filter((m) => m.sentiment === 'NEGATIVE')
+    );
+
+    this.neutralQueue = this.shuffle(
+      this.allMocks.filter((m) => m.sentiment === 'NEUTRAL')
+    );
+  }
+
+  private shuffle(array: any[]) {
+    return [...array].sort(() => Math.random() - 0.5);
+  }
+
+  // ================================
+  // 📱 MOBILE CAROUSEL (1 en 1)
+  // ================================
+  private startCarousel() {
+    this.stopCarousel();
+    this.carouselInterval = window.setInterval(() => {
+      if (!this.mocks.length) return;
+      this.currentIndex = (this.currentIndex + 1) % this.mocks.length;
+    }, this.CAROUSEL_TIME);
+  }
+
+  private stopCarousel() {
+    if (this.carouselInterval) {
+      clearInterval(this.carouselInterval);
+      this.carouselInterval = undefined;
+    }
+  }
+
+  // ================================
+  // 🖥️ DESKTOP ROTATION (3 balanceados)
+  // ================================
+  private startRotation() {
+    this.stopRotation();
+    this.rotationInterval = window.setInterval(() => {
+      this.pickBalancedMocks();
+    }, this.ROTATION_TIME);
+  }
+
+  private stopRotation() {
+    if (this.rotationInterval) {
+      clearInterval(this.rotationInterval);
+      this.rotationInterval = undefined;
+    }
+  }
+
+  // ================================
+  // 📐 RESPONSIVE
+  // ================================
   @HostListener('window:resize')
   onResize() {
     this.checkScreen();
@@ -54,34 +152,27 @@ export class MockCarouselComponent implements OnInit, OnDestroy {
   private checkScreen() {
     const mobileNow = window.innerWidth < 768;
 
-    if (mobileNow && !this.isMobile) {
-      this.isMobile = true;
-      this.startCarousel();
-    }
+    if (mobileNow !== this.isMobile) {
+      this.isMobile = mobileNow;
 
-    if (!mobileNow && this.isMobile) {
-      this.isMobile = false;
       this.stopCarousel();
+      this.stopRotation();
+
+      if (this.isMobile) {
+        this.startCarousel();
+      } else {
+        this.pickBalancedMocks();
+        this.startRotation();
+      }
     }
   }
 
-  private startCarousel() {
-    this.stopCarousel();
-    this.intervalId = window.setInterval(() => {
-      this.currentIndex = (this.currentIndex + 1) % this.mocks.length;
-    }, 5000);
-  }
-
-  private stopCarousel() {
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-      this.intervalId = undefined;
-    }
-  }
-
+  // ================================
+  // 🎨 UI HELPERS
+  // ================================
   getVisibleMocks() {
     if (this.isMobile) {
-      return [this.mocks[this.currentIndex]];
+      return this.mocks.length ? [this.mocks[this.currentIndex]] : [];
     }
     return this.mocks;
   }
@@ -109,5 +200,4 @@ export class MockCarouselComponent implements OnInit, OnDestroy {
       ? 'border-rose-500'
       : 'border-slate-400';
   }
-
 }

@@ -4,6 +4,14 @@ export interface SentimentApiResponse {
 }
 
 export interface SentimentResponse {
-    sentiment: 'POSITIVE' | 'NEGATIVE' | 'NEUTRAL';
-    probability: number;
+  sentiment: 'POSITIVE' | 'NEGATIVE' | 'NEUTRAL';
+  probability: number;
+}
+
+export interface SentimentHistoryItem {
+  id: number;
+  text: string;
+  sentiment: 'POSITIVE' | 'NEGATIVE' | 'NEUTRAL';
+  probability: number;
+  date?: string;
 }

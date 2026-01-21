@@ -1,91 +1,138 @@
 <section class="w-full py-10" *ngIf="metrics">
   <div class="max-w-6xl mx-auto px-4">
-    
-    <div class="relative overflow-hidden bg-slate-900/50 backdrop-blur-xl border border-white/10 p-8 shadow-[0_20px_50px_rgba(0,0,0,0.3)] rounded-[2.5rem] transition-all">
-      
-      <div class="absolute -top-24 -right-24 w-64 h-64 bg-blue-500/10 blur-[100px] rounded-full"></div>
+    <div
+      class="relative overflow-hidden bg-indigo-900/90 dark:bg-slate-900/90 backdrop-blur-2xl border border-indigo-700 dark:border-white/5 p-8 shadow-[0_20px_50px_rgba(67,56,202,0.2)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] rounded-[2.5rem] transition-all duration-300"
+    >
+      <div
+        class="absolute -top-24 -right-24 w-64 h-64 bg-indigo-500/10 blur-[100px] rounded-full"
+      ></div>
 
+      <!-- HEADER -->
       <div class="flex flex-col items-center mb-10 relative">
-        <div class="inline-flex items-center justify-center p-3 mb-4 bg-gradient-to-br from-blue-500/20 to-blue-600/5 rounded-2xl border border-blue-500/20 shadow-inner">
+        <div
+          class="inline-flex items-center justify-center p-3 mb-4 bg-gradient-to-br from-indigo-500/20 to-indigo-600/5 rounded-2xl border border-indigo-500/20 shadow-inner"
+        >
           <span class="text-2xl leading-none">📊</span>
         </div>
-        <h2 class="text-4xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-400">
+        <h2
+          class="text-4xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white to-indigo-200 dark:from-white dark:to-slate-400"
+        >
           Métricas Históricas
         </h2>
-        <div class="mt-2 h-1 w-12 bg-blue-500 rounded-full opacity-50"></div>
+        <div
+          class="mt-2 h-1 w-12 bg-indigo-500 rounded-full opacity-50 mb-4"
+        ></div>
+
+        <button
+          routerLink="/dashboard"
+          class="px-6 py-2 bg-indigo-800 dark:bg-slate-800 hover:bg-indigo-700 dark:hover:bg-indigo-600 text-white dark:text-slate-300 hover:text-white dark:hover:text-white rounded-full text-sm font-bold uppercase tracking-wider transition-all border border-indigo-600 dark:border-slate-700 hover:border-indigo-500 flex items-center gap-2 group"
+        >
+          <span>Intelligence Dashboard</span>
+          <span class="group-hover:translate-x-1 transition-transform">🚀</span>
+        </button>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
-        
-        <div class="group bg-white/[0.03] border border-white/5 p-6 rounded-3xl hover:bg-white/[0.06] transition-all duration-300">
-          <div class="flex justify-between items-end mb-4">
-            <div>
-              <p class="text-xs font-bold uppercase tracking-widest text-emerald-500/80 mb-1">Positivo</p>
-              <h3 class="text-4xl font-bold text-white tracking-tighter transition-transform group-hover:scale-105 duration-300">
-                {{ metrics.positive }}<span class="text-lg text-emerald-500/50 ml-1">%</span>
-              </h3>
-            </div>
-            <div class="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400">
-              <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307L21.75 4.5" />
-              </svg>
-            </div>
-          </div>
-          <div class="bg-slate-800/50 h-2.5 rounded-full overflow-hidden">
-            <div class="bg-gradient-to-r from-emerald-600 to-emerald-400 h-full rounded-full shadow-[0_0_12px_rgba(52,211,153,0.4)] transition-all duration-1000 ease-out"
-                 [style.width.%]="metrics.positive"></div>
+        <!-- POSITIVO -->
+        <div
+          class="group bg-indigo-950/50 dark:bg-white/[0.03] border border-indigo-800 dark:border-white/5 p-6 rounded-3xl hover:bg-indigo-900 dark:hover:bg-white/[0.06] transition-all shadow-sm dark:shadow-none"
+        >
+          <p
+            class="text-xs font-bold uppercase tracking-widest text-emerald-400 dark:text-emerald-500/80 mb-1"
+          >
+            Positivo
+          </p>
+
+          <h3 class="text-4xl font-bold text-white dark:text-white">
+            <span [appCountUp]="metrics.pctPositivos" [duration]="1500">0</span
+            >%
+          </h3>
+
+          <p class="text-xs text-emerald-400 dark:text-emerald-400 mt-1">
+            <span [appCountUp]="metrics.positivos">0</span> registros
+          </p>
+
+          <div
+            class="mt-4 bg-indigo-950 dark:bg-slate-800/50 h-2.5 rounded-full overflow-hidden"
+          >
+            <div
+              class="bg-gradient-to-r from-emerald-500 to-emerald-400 dark:from-emerald-600 dark:to-emerald-400 h-full rounded-full transition-all duration-1000"
+              [style.width.%]="metrics.pctPositivos"
+            ></div>
           </div>
         </div>
 
-        <div class="group bg-white/[0.03] border border-white/5 p-6 rounded-3xl hover:bg-white/[0.06] transition-all duration-300">
-          <div class="flex justify-between items-end mb-4">
-            <div>
-              <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Neutro</p>
-              <h3 class="text-4xl font-bold text-white tracking-tighter transition-transform group-hover:scale-105 duration-300">
-                {{ metrics.neutral }}<span class="text-lg text-slate-500 ml-1">%</span>
-              </h3>
-            </div>
-            <div class="w-10 h-10 rounded-full bg-slate-500/10 flex items-center justify-center text-slate-400">
-              <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" />
-              </svg>
-            </div>
-          </div>
-          <div class="bg-slate-800/50 h-2.5 rounded-full overflow-hidden">
-            <div class="bg-gradient-to-r from-slate-500 to-slate-300 h-full rounded-full transition-all duration-1000 ease-out"
-                 [style.width.%]="metrics.neutral"></div>
+        <!-- NEUTRO -->
+        <div
+          class="group bg-indigo-950/50 dark:bg-white/[0.03] border border-indigo-800 dark:border-white/5 p-6 rounded-3xl hover:bg-indigo-900 dark:hover:bg-white/[0.06] transition-all shadow-sm dark:shadow-none"
+        >
+          <p
+            class="text-xs font-bold uppercase tracking-widest text-indigo-300 dark:text-slate-400 mb-1"
+          >
+            Neutro
+          </p>
+
+          <h3 class="text-4xl font-bold text-white dark:text-white">
+            <span [appCountUp]="metrics.pctNeutros" [duration]="1500">0</span>%
+          </h3>
+
+          <p class="text-xs text-indigo-300 dark:text-slate-400 mt-1">
+            <span [appCountUp]="metrics.neutros">0</span> registros
+          </p>
+
+          <div
+            class="mt-4 bg-indigo-950 dark:bg-slate-800/50 h-2.5 rounded-full overflow-hidden"
+          >
+            <div
+              class="bg-gradient-to-r from-indigo-400 to-indigo-300 dark:from-slate-500 dark:to-slate-300 h-full rounded-full transition-all duration-1000"
+              [style.width.%]="metrics.pctNeutros"
+            ></div>
           </div>
         </div>
 
-        <div class="group bg-white/[0.03] border border-white/5 p-6 rounded-3xl hover:bg-white/[0.06] transition-all duration-300">
-          <div class="flex justify-between items-end mb-4">
-            <div>
-              <p class="text-xs font-bold uppercase tracking-widest text-rose-500/80 mb-1">Negativo</p>
-              <h3 class="text-4xl font-bold text-white tracking-tighter transition-transform group-hover:scale-105 duration-300">
-                {{ metrics.negative }}<span class="text-lg text-rose-500/50 ml-1">%</span>
-              </h3>
-            </div>
-            <div class="w-10 h-10 rounded-full bg-rose-500/10 flex items-center justify-center text-rose-400">
-              <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6L9 12.75l4.306-4.307L21.75 19.5" />
-              </svg>
-            </div>
-          </div>
-          <div class="bg-slate-800/50 h-2.5 rounded-full overflow-hidden">
-            <div class="bg-gradient-to-r from-rose-600 to-rose-400 h-full rounded-full shadow-[0_0_12px_rgba(251,113,133,0.4)] transition-all duration-1000 ease-out"
-                 [style.width.%]="metrics.negative"></div>
+        <!-- NEGATIVO -->
+        <div
+          class="group bg-indigo-950/50 dark:bg-white/[0.03] border border-indigo-800 dark:border-white/5 p-6 rounded-3xl hover:bg-indigo-900 dark:hover:bg-white/[0.06] transition-all shadow-sm dark:shadow-none"
+        >
+          <p
+            class="text-xs font-bold uppercase tracking-widest text-rose-400 dark:text-rose-500/80 mb-1"
+          >
+            Negativo
+          </p>
+
+          <h3 class="text-4xl font-bold text-white dark:text-white">
+            <span [appCountUp]="metrics.pctNegativos" [duration]="1500">0</span
+            >%
+          </h3>
+
+          <p class="text-xs text-rose-400 dark:text-rose-400 mt-1">
+            <span [appCountUp]="metrics.negativos">0</span> registros
+          </p>
+
+          <div
+            class="mt-4 bg-indigo-950 dark:bg-slate-800/50 h-2.5 rounded-full overflow-hidden"
+          >
+            <div
+              class="bg-gradient-to-r from-rose-500 to-rose-400 dark:from-rose-600 dark:to-rose-400 h-full rounded-full transition-all duration-1000"
+              [style.width.%]="metrics.pctNegativos"
+            ></div>
           </div>
         </div>
-
       </div>
 
-      <div class="mt-10 pt-6 border-t border-white/5 flex flex-col md:flex-row justify-center items-center gap-2">
-        <span class="text-slate-500 text-sm">Total analizados:</span>
-        <span class="px-3 py-1 bg-white/5 rounded-full text-white font-mono text-sm border border-white/10 ring-1 ring-white/5">
-          {{ metrics.total | number }}
+      <!-- TOTAL -->
+      <div
+        class="mt-10 pt-6 border-t border-indigo-700/50 dark:border-white/5 flex justify-center gap-2"
+      >
+        <span class="text-indigo-200 dark:text-slate-500 text-sm"
+          >Total analizados:</span
+        >
+        <span
+          class="px-3 py-1 bg-indigo-800 dark:bg-white/5 rounded-full text-white dark:text-white font-mono text-sm font-bold"
+        >
+          <span [appCountUp]="metrics.total">0</span>
         </span>
       </div>
-
     </div>
   </div>
 </section>

@@ -18,7 +18,6 @@ El frontend permite a los usuarios interactuar con un modelo de Data Science (Re
 * **Framework:** Angular 17.3.6 (Standalone Components).
 * **Estilos:** Tailwind CSS (Diseño responsivo y Dark Mode).
 * **Comunicación:** REST API con backend en FastAPI.
-* **Testing:** Cypress (Pruebas E2E Automatizadas).
 
 ## 📦 Arquitectura de Integración
 
