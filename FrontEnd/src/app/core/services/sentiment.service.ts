@@ -31,7 +31,7 @@ export class SentimentService {
         sentiment: this.mapSentiment(res.prevision),
         probability: res.probabilidad,
       })),
-      catchError(this.handleError)
+      
     );
   }
 
@@ -74,7 +74,7 @@ export class SentimentService {
         pctNeutros: res.pctNeutros,
         pctNegativos: res.pctNegativos,
       })),
-      catchError(this.handleError)
+      
     );
   }
 
@@ -93,7 +93,7 @@ export class SentimentService {
             new Date().toISOString(),
         }))
       ),
-      catchError(this.handleError)
+      
     );
   }
 }

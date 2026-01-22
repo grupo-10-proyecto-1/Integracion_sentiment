@@ -1,7 +1,7 @@
 export const environment = {
     production: false,
     api: {
-        baseUrl: 'http://localhost:8080',
+        baseUrl: '/api',
         sentiment: '/sentiment',
         health: '/health',
         healthModel: '/health/model',

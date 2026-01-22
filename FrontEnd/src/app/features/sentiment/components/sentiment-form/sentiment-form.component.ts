@@ -203,13 +203,20 @@ export class SentimentFormComponent {
             analysis: res,
             original: this.parsedData[i],
           });
-        } catch (err) {
-          this.batchResults.push({
-            text: textToAnalyze,
-            error: true,
-            original: this.parsedData[i],
-          });
-        }
+        } catch (err: any) {
+            const msg =
+              err?.error?.error || // backend {error:"...", code:"..."}
+              err?.error?.message ||
+              err?.message ||
+              'Error al analizar';
+
+            this.batchResults.push({
+              text: textToAnalyze,
+              error: true,
+              errorMessage: msg,
+              original: this.parsedData[i],
+            });
+          }
       }
       this.uploadProgress = Math.round(((i + 1) / total) * 100);
     }

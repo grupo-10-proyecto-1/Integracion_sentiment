@@ -112,7 +112,10 @@ export class SentimentComponent implements OnInit, OnDestroy {
         this.loadMetrics();
         this.scrollToResult();
       },
-      error: () => this.formComponent.stopLoading(),
+      error: () => {
+        this.formComponent.stopLoading();
+        this.result = undefined; // opcional
+      },
     });
   }
 

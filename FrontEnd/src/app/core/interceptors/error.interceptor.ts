@@ -26,10 +26,15 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
       // Try to get message from backend
       if (error.error && typeof error.error === 'object') {
-        if (error.error.detail) {
-          errorMessage = error.error.detail;
-        } else if (error.error.message) {
+        // ✅ Tu backend:
+        if (error.error.error) {
+          errorMessage = error.error.error;
+        }
+        // Otros formatos comunes:
+        else if (error.error.message) {
           errorMessage = error.error.message;
+        } else if (error.error.detail) {
+          errorMessage = error.error.detail;
         }
       }
 
