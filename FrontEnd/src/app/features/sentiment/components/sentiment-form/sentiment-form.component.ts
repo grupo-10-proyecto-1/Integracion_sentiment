@@ -19,7 +19,10 @@ export class SentimentFormComponent {
   text = '';
   loading = false;
 
-  // Configuración de modelos
+  // Feature flag: selector de modelo (desactivado por ahora)
+  showModelSelector = false;
+
+  // Configuración de modelos (solo si se reactiva a futuro)
   models = [
     { id: 'tfidf', name: 'TF-IDF (Modelo Actual)', available: true },
     { id: 'bert', name: 'BERT Transformer', available: false },
@@ -68,6 +71,7 @@ export class SentimentFormComponent {
   analyze() {
     if (!this.text.trim() || !this.apiOnline || this.checkingApi) return;
 
+    // selectedModel queda reservado para futura integración (no afecta el request actual)
     this.loading = true;
     this.analyzeText.emit(this.text);
   }
