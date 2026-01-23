@@ -5,7 +5,7 @@
 Sistema completo de análisis de sentimientos integrado:
 - **FrontEnd**: Angular + Tailwind (Puerto 4200)
 - **BackEnd**: Java Spring Boot (Puerto 8080)
-- **FastAPI**: Python + Scikit-learn (Puerto 8000)
+- **FastAPI**: Python + PyTorch/Transformers (Puerto 8000)
 
 ---
 
@@ -72,6 +72,6 @@ npm start
 
 ## 🛠️ Tecnologías
 -   **Java 17** (Spring Boot 3.2.4)
--   **Python 3.x** (FastAPI, Scikit-learn)
+-   **Python 3.x** (FastAPI, PyTorch, Transformers)
 -   **Angular 17** (Node.js)
 -   **GitHub Actions** (CI/CD Pipeline Automatizado)

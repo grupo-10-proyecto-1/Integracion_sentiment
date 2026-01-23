@@ -222,7 +222,7 @@ Se confirma oficialmente que todas las pruebas planificadas han sido realizadas 
 *   **Infraestructura:** Estable (Docker Compose + Nginx).
 *   **Backend:** Funcional y corregido (Rutas `/api/...`).
 *   **Frontend:** Integrado y visualizando datos correctamente.
-*   **Modelo IA:** Respondiendo predicciones precisas.
+*   **Modelo IA:** Respondiendo predicciones precisas (PyTorch/Transformers).
 
 **Estado del Proyecto:** 🟢 **LISTO PARA DEMO / PRODUCCIÓN**
 
@@ -234,4 +234,33 @@ Se confirma oficialmente que todas las pruebas planificadas han sido realizadas 
 
 ### Artefactos de Prueba Generados
 *   **Colección Postman:** `Sentiment_Analysis.postman_collection.json`
-    *   **Descripción:** Contiene los casos de prueba para `/api/sentiment`, `/api/history`, `/api/stats` y `/api/health`. Ejecutada y validada mediante la extensión de Postman para VS Code.
+    *   **Descripción:** Contiene los casos de prueba para `/api/sentiment`, `/api/history`, `/api/stats` y `/api/health`. Ejecutada y validada mediante la extensión de Postman para VS Code.Frontend (Interfaz de Usuario)
+Framework: Angular 17 (Arquitectura basada en Componentes Standalone).
+Lenguaje: TypeScript.
+Estilos: Tailwind CSS (Diseño responsivo y modo oscuro).
+Runtime de Desarrollo: Node.js.
+⚙️ Backend (Lógica de Negocio & Orquestación)
+Lenguaje: Java 17.
+Framework: Spring Boot 3.2.4.
+Base de Datos: H2 Database (SQL, ejecutándose en modo archivo/memoria para persistencia ligera).
+Gestor de Dependencias: Maven.
+Documentación API: Swagger / OpenAPI (implícito en Spring Boot).
+🧠 Data Science & IA (Microservicio de Modelos)
+Lenguaje: Python 3.10.
+Framework API: FastAPI (con servidor Uvicorn).
+Deep Learning / NLP:
+PyTorch (torch): Motor de tensores y redes neuronales.
+Transformers (Hugging Face): Para cargar los modelos pre-entrenados.
+Modelos Utilizados:
+BETO (BERT Spanish): Para análisis en español.
+RoBERTa: Para análisis en portugués.
+Librerías Auxiliares:
+langdetect: Para detección automática de idioma.
+joblib: Para carga de configuraciones serializadas.
+pydantic: Para validación de datos de entrada/salida.
+🏗️ Infraestructura & DevOps
+Contenedorización: Docker.
+Orquestación Local: Docker Compose.
+Servidor Web / Proxy Inverso: Nginx (Imagen nginx:alpine).
+Maneja el enrutamiento entre el Frontend (puerto 80) y el Backend (puerto 8080).
+CI/CD: GitHub Actions (según documentación para pipelines de construcción y pruebas).

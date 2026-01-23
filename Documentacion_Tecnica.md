@@ -17,12 +17,12 @@ El sistema sigue un patrón de arquitectura distribuida con tres componentes pri
     - Actúa como API Gateway y orquestador.
     - Gestiona la lógica de negocio, validaciones de seguridad y persistencia de métricas.
     - Implementa patrones de resiliencia (Reintentos y manejo de fallos) para la comunicación con el servicio de IA.
-- **Persistencia:** Base de datos H2 (en memoria) para almacenamiento transaccional de historial y estadísticas.
+- **Persistencia:** Base de datos H2 (basada en archivo) para almacenamiento persistente de historial y estadísticas entre reinicios.
 
 ### 2.3. Data Science Service (Capa de Inteligencia)
-- **Tecnología:** Python 3.10 + FastAPI + Scikit-learn.
-- **Responsabilidad:** Exponer modelos de Machine Learning entrenados (Regresión Logística) para la clasificación de texto en Español y Portugués.
-- **Performance:** Serialización de modelos con Joblib para inferencia de baja latencia.
+- **Tecnología:** Python 3.10 + FastAPI + PyTorch + Transformers.
+- **Responsabilidad:** Exponer modelos de Deep Learning (BETO para Español, RoBERTa para Portugués) para la clasificación de texto.
+- **Performance:** Carga de modelos pre-entrenados optimizados para inferencia en CPU/GPU.
 
 ## 3. Flujo de Datos (Data Flow)
 1.  **Input:** El usuario ingresa texto en el FrontEnd.
@@ -35,7 +35,7 @@ El sistema sigue un patrón de arquitectura distribuida con tres componentes pri
 ## 4. Tecnologías y Herramientas
 - **Lenguajes:** Java 17, Python 3.10, TypeScript 5.
 - **Frameworks:** Spring Boot 3.2.4, FastAPI 0.109, Angular 17.
-- **Librerías de IA:** Scikit-learn, Joblib, Langdetect.
+- **Librerías de IA:** PyTorch, Transformers (Hugging Face), Langdetect.
 - **Build Tools:** Maven, NPM.
 - **Base de Datos:** H2 Database Engine.
 

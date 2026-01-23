@@ -15,7 +15,7 @@ services:
     environment:
       - SENTIMENT_MODE=python
       - PYTHON_API_BASE_URL=http://sentiment-model:8000
-      - SPRING_DATASOURCE_URL=jdbc:h2:mem:sentimentdb;DB_CLOSE_DELAY=-1
+      - SPRING_DATASOURCE_URL=jdbc:h2:file:./data/sentimentdb
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - SERVER_ERROR_INCLUDE_MESSAGE=always
       - SERVER_ERROR_INCLUDE_BINDING_ERRORS=always

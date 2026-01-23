@@ -19,7 +19,6 @@ import { SentimentFormComponent } from './components/sentiment-form/sentiment-fo
 import { SentimentResultComponent } from './components/sentiment-result/sentiment-result.component';
 import { HeaderComponent } from '../../shared/components/header/header.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
-import { MockCarouselComponent } from '../../shared/components/mock-carousel/mock-carousel.component';
 import { SentimentChartComponent } from '../../shared/components/sentiment-chart/sentiment-chart.component';
 import { SentimentHistoryComponent } from '../../shared/components/sentiment-history/sentiment-history.component';
 
@@ -34,7 +33,6 @@ import { SentimentHistoryComponent } from '../../shared/components/sentiment-his
     SentimentResultComponent,
     HeaderComponent,
     FooterComponent,
-    MockCarouselComponent,
     SentimentHistoryComponent,
   ],
   templateUrl: './sentiment.component.html',
@@ -53,9 +51,6 @@ export class SentimentComponent implements OnInit, OnDestroy {
 
   @ViewChild(SentimentFormComponent)
   formComponent!: SentimentFormComponent;
-
-  @ViewChild(MockCarouselComponent)
-  carouselComponent!: MockCarouselComponent;
 
   constructor(
     private sentimentService: SentimentService,
@@ -80,7 +75,6 @@ export class SentimentComponent implements OnInit, OnDestroy {
       // Reload data whenever connection is available
       if (isOnline) {
         this.loadMetrics();
-        this.carouselComponent?.reload();
       }
 
       if (!wasChecking) {
