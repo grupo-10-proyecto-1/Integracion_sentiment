@@ -1,50 +1,337 @@
 <section class="p-6 flex flex-col items-center justify-center">
-    <div class="w-full md:w-4/5 lg:w-3/4 max-w-4xl rounded-3xl bg-slate-900 border border-slate-800 p-8 shadow-2xl space-y-6">
-        
-        <div class="space-y-1">
-            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
-                <span class="text-indigo-400">✍️</span> Analizar Comentario
-            </h2>
-            <p class="text-slate-400 text-sm italic">Privacidad garantizada: no almacenamos datos personales.</p>
-        </div>
-
-        <div class="relative group">
-            <textarea [(ngModel)]="text" rows="5" 
-                placeholder="Escribe o pega el comentario aquí..."
-                class="w-full p-5 rounded-2xl bg-slate-950 border border-slate-800 focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/10 outline-none text-slate-200 transition-all resize-none placeholder:text-slate-600">
-            </textarea>
-            
-            <div class="absolute bottom-4 right-4 text-[10px] font-mono text-slate-600 group-focus-within:text-indigo-400 transition-colors uppercase tracking-widest">
-                {{ text.length > 0 ? 'Ready to analyze' : 'Waiting for input' }}
-            </div>
-        </div>
-
-        <details class="group bg-slate-950/50 rounded-xl border border-slate-800 transition-all">
-            <summary class="list-none p-3 cursor-pointer flex items-center justify-between">
-                <div class="flex items-center gap-2 text-[11px] font-semibold text-slate-500 uppercase tracking-wider select-none">
-                    <span class="text-indigo-400">💡</span> ¿Cómo obtener mejores resultados?
-                </div>
-                <span class="text-slate-600 group-open:rotate-180 transition-transform text-[10px]">▼</span>
-            </summary>
-            
-            <div class="px-4 pb-4 animate-in fade-in slide-in-from-top-1 duration-300">
-                <div class="flex items-start gap-3 p-3 rounded-lg bg-amber-500/5 border border-amber-500/10">
-                    <p class="text-[11px] leading-relaxed text-slate-400">
-                        <strong class="text-amber-500/80 font-bold uppercase text-[9px]">Recomendaciones técnicas:</strong><br>
-                        Para una precisión óptima con nuestro modelo <b>TF-IDF</b>, utiliza una ortografía estándar (incluyendo tildes). 
-                        El motor está diseñado para lenguaje <b>objetivo y directo</b>; actualmente no procesa sarcasmo o dobles sentidos.
-                    </p>
-                </div>
-            </div>
-        </details>
-
-        <button (click)="submit()" [disabled]="loading || !text"
-            class="w-full py-4 rounded-2xl bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-500 transition-all duration-300 font-bold text-white shadow-lg shadow-indigo-900/20 flex items-center justify-center gap-3 group">
-            <span *ngIf="loading" class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-            {{ loading ? 'Procesando con IA...' : 'Analizar Sentimiento' }}
-            <svg *ngIf="!loading" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-        </button>
+  <div
+    class="w-full md:w-4/5 lg:w-3/4 max-w-4xl rounded-3xl bg-indigo-900 dark:bg-slate-900 border border-indigo-800 dark:border-slate-800 p-8 shadow-2xl space-y-6 transition-colors duration-300"
+  >
+    <div
+      class="flex p-1 bg-indigo-950/50 dark:bg-slate-950/50 rounded-xl border border-indigo-800 dark:border-slate-800 mb-6 transition-colors duration-300"
+    >
+      <button
+        (click)="activeTab = 'text'"
+        [class.bg-indigo-600]="activeTab === 'text'"
+        [class.dark:bg-slate-800]="activeTab === 'text'"
+        [class.text-white]="activeTab === 'text'"
+        [class.shadow-md]="activeTab === 'text'"
+        [class.text-indigo-300]="activeTab !== 'text'"
+        [class.dark:text-slate-500]="activeTab !== 'text'"
+        class="flex-1 py-2 text-sm font-bold rounded-lg transition-all flex items-center justify-center gap-2 hover:text-white"
+      >
+        <span>✍️</span> Texto
+      </button>
+      <button
+        (click)="activeTab = 'file'"
+        [class.bg-indigo-600]="activeTab === 'file'"
+        [class.dark:bg-slate-800]="activeTab === 'file'"
+        [class.text-white]="activeTab === 'file'"
+        [class.shadow-md]="activeTab === 'file'"
+        [class.text-indigo-300]="activeTab !== 'file'"
+        [class.dark:text-slate-500]="activeTab !== 'file'"
+        class="flex-1 py-2 text-sm font-bold rounded-lg transition-all flex items-center justify-center gap-2 hover:text-white"
+      >
+        <span>📂</span> Archivo
+      </button>
     </div>
+
+    <div
+      *ngIf="activeTab === 'text'"
+      class="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300"
+    >
+      <div class="space-y-1">
+        <h2
+          class="text-2xl font-bold text-white flex items-center gap-2 transition-colors duration-300"
+        >
+          Analizar Comentario
+        </h2>
+        <p class="text-slate-400 text-sm italic">
+          Escribe una frase para analizar su sentimiento.
+        </p>
+        <p
+          *ngIf="!apiOnline"
+          class="text-xs text-rose-400 font-bold flex items-center gap-2 animate-pulse mt-1"
+        >
+          🔴 Servicio no disponible. Reconectando...
+        </p>
+      </div>
+
+      <div class="relative group">
+        <textarea
+          [(ngModel)]="text"
+          rows="4"
+          [disabled]="!apiOnline"
+          class="relative w-full bg-indigo-950 dark:bg-slate-950 text-white dark:text-slate-200 placeholder-indigo-400/50 dark:placeholder-slate-600 rounded-2xl p-6 border border-indigo-800 dark:border-slate-700 hover:border-indigo-700 dark:hover:border-slate-600 focus:border-indigo-500 dark:focus:border-slate-400 focus:outline-none resize-none text-lg leading-relaxed shadow-inner transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-slate-900"
+          placeholder="Escribe algo aquí... (ej: 'Me siento optimista sobre el futuro')"
+        ></textarea>
+
+        <!-- Character Counter -->
+        <div
+          class="absolute bottom-4 right-4 text-xs font-bold text-indigo-400 dark:text-slate-600 pointer-events-none"
+        >
+          {{ text.length }} caracteres
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="mt-8 flex justify-end gap-4">
+        <button
+          *ngIf="text"
+          (click)="text = ''"
+          class="px-6 py-3 rounded-xl text-slate-500 dark:text-slate-400 font-bold hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-700 dark:hover:text-white transition-all text-sm uppercase tracking-wider"
+        >
+          Limpiar
+        </button>
+      </div>
+      <div class="space-y-2">
+        <label
+          class="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1"
+        >
+          Modelo de IA
+        </label>
+        <div class="relative">
+          <select
+            [ngModel]="selectedModel"
+            (ngModelChange)="onModelChange($event)"
+            [disabled]="loading"
+            class="w-full appearance-none bg-slate-950 border border-slate-800 hover:border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-300 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all cursor-pointer disabled:opacity-50"
+          >
+            <option
+              *ngFor="let model of models"
+              [value]="model.id"
+              [disabled]="!model.available"
+            >
+              {{ model.name }}
+            </option>
+          </select>
+          <div
+            class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <button
+        (click)="submit()"
+        [disabled]="loading || !text || !apiOnline || checkingApi"
+        class="w-full py-4 rounded-2xl bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-500 transition-all duration-300 font-bold text-white shadow-lg shadow-indigo-900/20 flex items-center justify-center gap-3 group"
+      >
+        <span
+          *ngIf="loading"
+          class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"
+        ></span>
+        {{ loading ? "Procesando con IA..." : "Analizar Sentimiento" }}
+        <svg
+          *ngIf="!loading"
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5 group-hover:translate-x-1 transition-transform"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M13 7l5 5m0 0l-5 5m5-5H6"
+          />
+        </svg>
+      </button>
+
+      <details
+        class="group bg-slate-950/50 rounded-xl border border-slate-800 transition-all"
+      >
+        <summary
+          class="list-none p-3 cursor-pointer flex items-center justify-between"
+        >
+          <div
+            class="flex items-center gap-2 text-[11px] font-semibold text-slate-500 uppercase tracking-wider select-none"
+          >
+            <span class="text-indigo-400">💡</span> ¿Cómo obtener mejores
+            resultados?
+          </div>
+          <span
+            class="text-slate-600 group-open:rotate-180 transition-transform text-[10px]"
+            >▼</span
+          >
+        </summary>
+        <div
+          class="px-4 pb-4 animate-in fade-in slide-in-from-top-1 duration-300"
+        >
+          <div
+            class="flex items-start gap-3 p-3 rounded-lg bg-amber-500/5 border border-amber-500/10"
+          >
+            <p class="text-[11px] leading-relaxed text-slate-400">
+              <strong class="text-amber-500/80 font-bold uppercase text-[9px]"
+                >Recomendaciones técnicas:</strong
+              ><br />
+              Para una precisión óptima con nuestro modelo <b>TF-IDF</b>,
+              utiliza una ortografía estándar (incluyendo tildes). El motor está
+              diseñado para lenguaje <b>objetivo y directo</b>; actualmente no
+              procesa sarcasmo o dobles sentidos.
+            </p>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <div
+      *ngIf="activeTab === 'file'"
+      class="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300"
+    >
+      <div class="space-y-1">
+        <h2
+          class="text-2xl font-bold text-white flex items-center gap-2 transition-colors duration-300"
+        >
+          Carga Masiva
+        </h2>
+        <p class="text-indigo-200 dark:text-slate-400 text-sm italic">
+          Analiza múltiples comentarios desde Excel, CSV o JSON.
+        </p>
+        <p
+          *ngIf="!apiOnline"
+          class="text-xs text-rose-400 font-bold flex items-center gap-2 animate-pulse mt-1"
+        >
+          🔴 Servicio no disponible. Reconectando...
+        </p>
+      </div>
+
+      <div
+        *ngIf="!selectedFile"
+        class="relative w-full h-48 rounded-2xl border-2 border-dashed transition-all cursor-pointer flex flex-col items-center justify-center gap-3 group"
+        [ngClass]="{
+          'border-indigo-500 bg-indigo-500/10': isDragging,
+          'border-indigo-700 dark:border-slate-700 bg-indigo-950 dark:bg-slate-950':
+            !isDragging,
+          'opacity-50 pointer-events-none': !apiOnline
+        }"
+        (dragover)="isDragging = true; $event.preventDefault()"
+        (dragleave)="isDragging = false"
+        (drop)="onFileDropped($event)"
+      >
+        <div
+          class="p-4 rounded-full bg-indigo-900 dark:bg-slate-900 group-hover:scale-110 transition-transform"
+        >
+          <span class="text-2xl">📂</span>
+        </div>
+        <div class="text-center space-y-1">
+          <p
+            class="text-sm font-bold text-indigo-300 group-hover:text-white transition-colors"
+          >
+            Arrastra tu archivo aquí
+          </p>
+          <p class="text-xs text-indigo-400/60 dark:text-slate-500">
+            Soporta .xlsx, .csv, .json, .txt
+          </p>
+        </div>
+
+        <input
+          type="file"
+          class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          accept=".xlsx,.xls,.csv,.json,.txt"
+          (change)="onFileSelected($event)"
+        />
+      </div>
+
+      <div
+        *ngIf="selectedFile"
+        class="bg-indigo-950 dark:bg-slate-900 rounded-xl p-4 border border-indigo-800 dark:border-slate-700 space-y-4"
+      >
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">📄</span>
+            <div>
+              <p class="text-sm font-bold text-white">
+                {{ selectedFile.name }}
+              </p>
+              <p class="text-xs text-indigo-300 dark:text-slate-400">
+                {{ parsedData.length }} registros detectados
+              </p>
+            </div>
+          </div>
+          <button
+            (click)="selectedFile = null"
+            class="text-slate-500 hover:text-rose-400 transition-colors text-xs font-bold uppercase"
+          >
+            Cambiar
+          </button>
+        </div>
+
+        <div *ngIf="fileColumns.length > 0" class="space-y-2">
+          <label
+            class="text-xs font-semibold text-slate-500 uppercase tracking-wider"
+          >
+            Columna a Analizar
+          </label>
+          <select
+            [(ngModel)]="selectedColumn"
+            class="w-full bg-indigo-900 dark:bg-slate-950 border border-indigo-700 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors"
+          >
+            <option value="" disabled>Selecciona una columna...</option>
+            <option *ngFor="let col of fileColumns" [value]="col">
+              {{ col }}
+            </option>
+          </select>
+        </div>
+
+        <div
+          *ngIf="
+            parsedData.length > 0 && (!fileColumns.length || selectedColumn)
+          "
+          class="pt-2 border-t border-slate-800"
+        >
+          <p class="text-xs text-slate-500 mb-2">Vista previa (Primer reg):</p>
+          <div
+            class="p-3 bg-slate-50 dark:bg-slate-950 rounded border border-slate-200 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-300 italic transition-colors"
+          >
+            "{{
+              fileColumns.length
+                ? parsedData[0][selectedColumn]
+                : parsedData[0].text
+            }}"
+          </div>
+        </div>
+
+        <button
+          (click)="processBatch()"
+          [disabled]="processingBatch || !apiOnline"
+          class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-500 text-white font-bold rounded-lg transition-all flex items-center justify-center gap-2"
+        >
+          <span
+            *ngIf="processingBatch"
+            class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"
+          ></span>
+          {{
+            processingBatch
+              ? "Procesando (" + uploadProgress + "%)..."
+              : "Analizar " + parsedData.length + " Filas"
+          }}
+        </button>
+
+        <div
+          *ngIf="processingBatch"
+          class="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden"
+        >
+          <div
+            class="h-full bg-indigo-500 transition-all duration-300 ease-out"
+            [style.width.%]="uploadProgress"
+          ></div>
+        </div>
+      </div>
+
+      <div *ngIf="batchResults.length > 0" class="mt-8">
+        <app-batch-results [results]="batchResults"></app-batch-results>
+      </div>
+    </div>
+  </div>
 </section>

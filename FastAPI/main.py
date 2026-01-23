@@ -180,13 +180,22 @@ class RobertaPipeline:
         return label, probs
 
 
+def resolve_model_path(folder: str) -> str:
+    # Si estás en Docker (Linux container), los modelos viven en /app/models
+    docker_path = os.path.join("/app/models", folder)
+    if os.path.exists(docker_path):
+        return docker_path
+
+    # Si estás en local, usa FastAPI/models/<folder>
+    return os.path.join(os.path.dirname(__file__), "models", folder)
+
+
 # ============================================================
 # 5) Carga de modelos (UNA sola vez al iniciar la API)
 # ============================================================
 
-pipeline_es = BETOPipeline("/app/models/model_b_es")  # BETO(BERT) ES
-pipeline_pt = RobertaPipeline("/app/models/model_pt")  # RoBERTa PT
-
+pipeline_es = BETOPipeline(resolve_model_path("model_b_es"))  # BETO(BERT) ES
+pipeline_pt = RobertaPipeline(resolve_model_path("model_pt"))  # RoBERTa PT
 
 # ============================================================
 # 6) Esquemas Pydantic (Entrada / Salida)

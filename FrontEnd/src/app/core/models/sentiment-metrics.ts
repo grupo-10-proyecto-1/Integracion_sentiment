@@ -10,8 +10,13 @@ export interface SentimentMetricsApiResponse {
 }
 
 export interface SentimentMetrics {
-  positive: number;
-  neutral: number;
-  negative: number;
   total: number;
+
+  positivos: number;
+  neutros: number;
+  negativos: number;
+
+  pctPositivos: number;
+  pctNeutros: number;
+  pctNegativos: number;
 }

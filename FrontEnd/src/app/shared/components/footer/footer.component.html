@@ -1,24 +1,29 @@
-<footer class="bg-slate-950 border-t border-slate-800 pt-16 pb-8 px-6">
+<footer
+  class="bg-indigo-950 dark:bg-slate-950 border-t border-indigo-900 dark:border-slate-800 pt-16 pb-8 px-6 transition-colors duration-300"
+>
   <div class="max-w-7xl mx-auto">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mb-12">
       <div class="space-y-4">
         <div class="flex items-center gap-2">
           <span class="text-2xl">🧠</span>
           <span
-            class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400"
+            class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-indigo-200 dark:from-white dark:to-slate-400"
           >
             Sentimind AI
           </span>
         </div>
-        <p class="text-slate-400 text-sm leading-relaxed max-w-xs">
-          Alura Latam G8 - TechAdvanced ONE <strong>Hackathon NoCountry 2025-26</strong>.
-          Una solución MVP que integra Data Science y Back-end.
+        <p
+          class="text-indigo-200/80 dark:text-slate-400 text-sm leading-relaxed max-w-xs transition-colors"
+        >
+          Proyecto desarrollado en la
+          <strong>Hackathon NoCountry / Alura Latam</strong>. Una solución MVP
+          que integra Data Science y Back-end.
         </p>
         <div class="flex md:flex md:flex-col gap-3 pt-2">
           <a
             href="https://github.com/grupo-10-proyecto-1/demo"
             target="_blank"
-            class="flex items-center gap-2 text-xs text-slate-500 hover:text-indigo-400 transition-colors"
+            class="flex items-center gap-2 text-xs text-indigo-300 dark:text-slate-500 hover:text-white dark:hover:text-indigo-400 transition-colors"
           >
             <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
               <path
@@ -30,7 +35,7 @@
           <a
             href="https://github.com/raulanders/007fastapi-python-model"
             target="_blank"
-            class="flex items-center gap-2 text-xs text-slate-500 hover:text-emerald-400 transition-colors"
+            class="flex items-center gap-2 text-xs text-indigo-300 dark:text-slate-500 hover:text-white dark:hover:text-emerald-400 transition-colors"
           >
             <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
               <path
@@ -51,7 +56,7 @@
         >
           <div class="flex justify-between items-center md:block">
             <h3
-              class="text-white font-bold uppercase text-[10px] tracking-widest mb-0 md:mb-4"
+              class="text-white font-bold uppercase text-[10px] tracking-widest mb-0 md:mb-4 transition-colors"
             >
               Stack Tecnológico
             </h3>
@@ -62,23 +67,27 @@
           </div>
         </summary>
         <ul
-          class="space-y-3 text-sm text-slate-400 mt-4 md:mt-0 border-l border-slate-800 md:border-none pl-4 md:pl-0"
+          class="space-y-3 text-sm text-indigo-200/60 dark:text-slate-400 mt-4 md:mt-0 border-l border-indigo-900 dark:border-slate-800 md:border-none pl-4 md:pl-0 transition-colors"
         >
           <li class="flex flex-col">
-            <span class="text-white text-xs font-semibold">Front-End</span>
-            <span class="text-xs">Angular &amp; Tailwind CSS</span>
+            <span class="text-white text-xs font-semibold transition-colors"
+              >Data Science</span
+            >
+            <span class="text-xs"
+              >TF-IDF + Regresión Logística (scikit-learn)</span
+            >
           </li>
           <li class="flex flex-col">
-            <span class="text-white text-xs font-semibold">Back-End</span>
-            <span class="text-xs">Java &amp; Spring Boot</span>
+            <span class="text-white text-xs font-semibold transition-colors"
+              >Back-end</span
+            >
+            <span class="text-xs">FastAPI / Python (Predictor Service)</span>
           </li>
           <li class="flex flex-col">
-            <span class="text-white text-xs font-semibold">Data Science</span>
-            <span class="text-xs">Python &amp; FastAPI</span>
-          </li>
-          <li class="flex flex-col">
-            <span class="text-white text-xs font-semibold">Containerización</span>
-            <span class="text-xs">Docker &amp; Docker Compose</span>
+            <span class="text-white text-xs font-semibold transition-colors"
+              >Integración</span
+            >
+            <span class="text-xs">JSON REST API (Joblib Serialization)</span>
           </li>
         </ul>
       </details>
@@ -92,7 +101,7 @@
         >
           <div class="flex justify-between items-center md:block">
             <h3
-              class="text-white font-bold uppercase text-[10px] tracking-widest mb-0 md:mb-4 italic"
+              class="text-white font-bold uppercase text-[10px] tracking-widest mb-0 md:mb-4 italic transition-colors"
             >
               MVP Metrics
             </h3>
@@ -103,7 +112,7 @@
           </div>
         </summary>
         <div
-          class="bg-slate-900/40 p-6 rounded-2xl border border-slate-800/50 mt-4 md:mt-0 space-y-3"
+          class="bg-indigo-900/30 dark:bg-slate-900/40 p-6 rounded-2xl border border-indigo-800/30 dark:border-slate-800/50 mt-4 md:mt-0 space-y-3 transition-colors"
         >
           <div
             class="flex items-center gap-2 text-[10px] uppercase tracking-widest"
@@ -117,11 +126,17 @@
               }"
             ></span>
 
-            <span *ngIf="apiStatus === 'online'" class="text-emerald-400">
+            <span
+              *ngIf="apiStatus === 'online'"
+              class="text-emerald-400 font-bold"
+            >
               API conectada
             </span>
 
-            <span *ngIf="apiStatus === 'offline'" class="text-rose-400">
+            <span
+              *ngIf="apiStatus === 'offline'"
+              class="text-rose-400 font-bold"
+            >
               API desconectada
             </span>
 
@@ -131,11 +146,15 @@
           </div>
 
           <div class="flex justify-between items-center text-[11px]">
-            <span class="text-slate-500 font-medium">Output:</span>
-            <span class="text-slate-300 font-mono">Label + Probabilidad</span>
+            <span class="text-indigo-300 dark:text-slate-500 font-medium"
+              >Output:</span
+            >
+            <span class="text-white dark:text-slate-300 font-mono"
+              >Label + Probabilidad</span
+            >
           </div>
           <div
-            class="pt-2 border-t border-slate-800 flex items-center gap-2 text-[10px] text-indigo-400 font-bold uppercase tracking-tighter"
+            class="pt-2 border-t border-indigo-800/30 dark:border-slate-800 flex items-center gap-2 text-[10px] text-indigo-300 dark:text-indigo-400 font-bold uppercase tracking-tighter"
           >
             <span
               class="flex h-2 w-2 rounded-full bg-indigo-500 animate-pulse"
@@ -147,10 +166,11 @@
     </div>
 
     <div
-      class="pt-8 border-t border-slate-900 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] text-slate-500 uppercase tracking-widest font-medium text-center md:text-left"
+      class="pt-8 border-t border-indigo-900 dark:border-slate-900 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] text-indigo-400/60 dark:text-slate-500 uppercase tracking-widest font-medium text-center md:text-left transition-colors"
     >
       <p>
-        © 2025-26 AluraLatam G8 | tech Advanced | Hackathon NoCountry - Grupo 10 - Proyecto analizador de sentimientos
+        © 2026 Hackathon NoCountry / Alura Latam - Grupo 10. Proyecto con fines
+        educativos.
       </p>
       <div class="hidden md:flex gap-6">
         <span>Pandas</span>
