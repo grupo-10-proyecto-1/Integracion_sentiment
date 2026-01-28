@@ -179,6 +179,7 @@ class RobertaPipeline:
 
         return label, probs
 
+
 def resolve_model_path(folder: str) -> str:
     # Si estás en Docker (Linux container), los modelos viven en /app/models
     docker_path = os.path.join("/app/models", folder)
